@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Iniciar Sesion - FashFind</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="/css/fashfind.css" rel="stylesheet">
+</head>
+<body class="ff-login-bg d-flex align-items-center min-vh-100">
+
+    <div class="container">
+        <a th:href="@{/inicio}" class="btn btn-sm mb-3 ff-btn-back">
+            <i class="bi bi-arrow-left"></i> Volver a la pagina de inicio
+        </a>
+        <div class="row justify-content-center">
+            <div class="col-lg-5 col-md-7">
+                <div class="card shadow border-0 rounded-3 overflow-hidden ff-card-login">
+                    <div class="card-body p-4 p-md-5">
+                        <div class="text-center mb-4">
+                            <i class="bi bi-bag-heart-fill fs-1 text-ff"></i>
+                            <h3 class="fw-bold mt-2" style="color:#1a1a2e;">FashFind</h3>
+                            <p class="text-muted small mb-0">Ingresa a tu cuenta</p>
+                        </div>
+
+                        <div th:if="${param.error}" class="alert alert-danger py-2">
+                            <i class="bi bi-exclamation-circle me-1"></i> Usuario o contrasena incorrectos.
+                        </div>
+                        <div th:if="${param.logout}" class="alert alert-info py-2">
+                            <i class="bi bi-check-circle me-1"></i> Sesion cerrada correctamente.
+                        </div>
+                        <div th:if="${param.registrado}" class="alert alert-success py-2">
+                            <i class="bi bi-check-circle me-1"></i> Cuenta creada. Ya puedes iniciar sesion.
+                        </div>
+
+                        <form th:action="@{/login}" method="post">
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Nombre de usuario</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-white"><i class="bi bi-person"></i></span>
+                                    <input type="text" name="username" class="form-control" placeholder="Tu nombre de usuario" required autofocus>
+                                </div>
+                            </div>
+                            <div class="mb-4">
+                                <label class="form-label fw-semibold">Contrasena</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-white"><i class="bi bi-lock"></i></span>
+                                    <input type="password" name="password" id="contrasena" class="form-control" placeholder="Contrasena" required>
+                                    <button class="btn btn-outline-secondary" type="button" id="botonOjo">
+                                        <i class="bi bi-eye" id="iconoOjo"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-ff w-100 fw-semibold py-2">
+                                <i class="bi bi-box-arrow-in-right me-1"></i> Ingresar
+                            </button>
+                        </form>
+
+                        <p class="text-center text-muted small mt-4 mb-0">
+                            Aun no tienes cuenta?
+                            <a th:href="@{/registro}" class="link-ff">Registrate aqui</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('botonOjo').addEventListener('click', function () {
+            var input = document.getElementById('contrasena');
+            var icono = document.getElementById('iconoOjo');
+            var visible = input.type === 'text';
+            input.type = visible ? 'password' : 'text';
+            icono.className = visible ? 'bi bi-eye' : 'bi bi-eye-slash';
+        });
+    </script>
+</body>
+</html>

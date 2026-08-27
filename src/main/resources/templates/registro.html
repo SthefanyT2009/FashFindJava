@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Crear cuenta - FashFind</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="/css/fashfind.css" rel="stylesheet">
+</head>
+<body class="ff-login-bg py-5">
+
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-7">
+                <div class="card shadow border-0 rounded-3 ff-card-login">
+                    <div class="card-body p-4 p-md-5">
+
+                        <div class="text-center mb-4">
+                            <i class="bi bi-bag-heart-fill fs-1 text-ff"></i>
+                            <h3 class="fw-bold mt-2" style="color:#1a1a2e;">Crear cuenta</h3>
+                            <p class="text-muted small mb-0">Se registra como Cliente</p>
+                        </div>
+
+                        <div th:if="${error}" class="alert alert-danger py-2" th:text="${error}"></div>
+
+                        <form th:action="@{/registro}" th:object="${usuario}" method="post" id="formRegistro" novalidate>
+
+                            <h6 class="text-uppercase text-muted small fw-bold mb-3">Datos de acceso</h6>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-semibold">Nombre de usuario</label>
+                                    <input type="text" th:field="*{nombreUsuario}" class="form-control" required minlength="3" autocomplete="off">
+                                    <div class="invalid-feedback">Solo letras, numeros y guion bajo, minimo 3 caracteres.</div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-semibold">Cedula</label>
+                                    <input type="text" inputmode="numeric" th:field="*{cc}" class="form-control" required>
+                                    <div class="invalid-feedback">Solo numeros, entre 6 y 10 digitos.</div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-semibold">Contrasena</label>
+                                    <input type="password" name="contrasena" id="contrasena" class="form-control" required minlength="6">
+                                    <div class="invalid-feedback">Debe tener minimo 6 caracteres, sin espacios.</div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-semibold">Confirmar contrasena</label>
+                                    <input type="password" name="confirmarContrasena" id="confirmarContrasena" class="form-control" required minlength="6">
+                                    <div class="invalid-feedback">Las contrasenas no coinciden.</div>
+                                </div>
+                            </div>
+
+                            <h6 class="text-uppercase text-muted small fw-bold mb-3 mt-4">Datos personales</h6>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-semibold">Nombres</label>
+                                    <input type="text" th:field="*{nombres}" class="form-control" required>
+                                    <div class="invalid-feedback">Solo se permiten letras y espacios.</div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-semibold">Apellidos</label>
+                                    <input type="text" th:field="*{apellidos}" class="form-control" required>
+                                    <div class="invalid-feedback">Solo se permiten letras y espacios.</div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-semibold">Genero</label>
+                                    <select th:field="*{genero}" class="form-select">
+                                        <option value="">Prefiero no decirlo</option>
+                                        <option value="Femenino">Femenino</option>
+                                        <option value="Masculino">Masculino</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-semibold">Fecha de nacimiento</label>
+                                    <input type="date" th:field="*{fechaNacimiento}" class="form-control" required>
+                                    <div class="invalid-feedback">Debes tener entre 12 y 100 anos, y la fecha no puede ser futura.</div>
+                                </div>
+                            </div>
+
+                            <h6 class="text-uppercase text-muted small fw-bold mb-3 mt-4">Contacto</h6>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-semibold">Correo</label>
+                                    <input type="email" th:field="*{correo}" class="form-control" required>
+                                    <div class="invalid-feedback">Ingresa un correo valido, ej: nombre@correo.com</div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-semibold">Telefono</label>
+                                    <input type="text" inputmode="numeric" th:field="*{telefono}" class="form-control" required>
+                                    <div class="invalid-feedback">Solo numeros, entre 7 y 10 digitos.</div>
+                                </div>
+                            </div>
+                            <div class="mb-4">
+                                <label class="form-label fw-semibold">Direccion</label>
+                                <input type="text" th:field="*{direccion}" class="form-control" required minlength="5">
+                                <div class="invalid-feedback">Ingresa una direccion valida (minimo 5 caracteres).</div>
+                            </div>
+
+                            <button type="submit" class="btn btn-ff w-100 fw-semibold py-2">
+                                <i class="bi bi-person-plus me-1"></i> Crear cuenta
+                            </button>
+                        </form>
+
+                        <p class="text-center text-muted small mt-4 mb-0">
+                            Ya tienes cuenta?
+                            <a th:href="@{/login}" class="link-ff">Inicia sesion</a>
+                        </p>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+
+        var form = document.getElementById('formRegistro');
+
+        // ---------- Helpers ----------
+        function marcarInvalido(input) {
+            input.classList.remove('is-valid');
+            input.classList.add('is-invalid');
+        }
+        function marcarValido(input) {
+            input.classList.remove('is-invalid');
+            input.classList.add('is-valid');
+        }
+        function limpiarEstado(input) {
+            input.classList.remove('is-invalid', 'is-valid');
+        }
+
+        // Filtra en vivo: borra del input cualquier caracter que no matchee "permitidos"
+        // y marca error momentaneo si se intento escribir algo no permitido.
+        function filtrarEnVivo(input, regexNoPermitido) {
+            input.addEventListener('input', function () {
+                var original = input.value;
+                var filtrado = original.replace(regexNoPermitido, '');
+                if (filtrado !== original) {
+                    input.value = filtrado;
+                    marcarInvalido(input);
+                } else if (input.value.length > 0) {
+                    limpiarEstado(input);
+                }
+            });
+        }
+
+        // ---------- Filtros por campo (bloquean caracteres no permitidos al escribir) ----------
+        var regexLetras = /[^A-Za-zÁÉÍÓÚÑÜáéíóúñü\s]/g;
+        var regexUsuario = /[^A-Za-z0-9_]/g;
+        var regexNumeros = /[^0-9]/g;
+        var regexDireccion = /[^A-Za-zÀ-ÿ0-9\s#\-.,]/g;
+
+        var campoUsuario = document.getElementById('nombreUsuario');
+        var campoCc = document.getElementById('cc');
+        var campoNombres = document.getElementById('nombres');
+        var campoApellidos = document.getElementById('apellidos');
+        var campoTelefono = document.getElementById('telefono');
+        var campoDireccion = document.getElementById('direccion');
+        var campoContrasena = document.getElementById('contrasena');
+        var campoConfirmar = document.getElementById('confirmarContrasena');
+        var campoCorreo = document.getElementById('correo');
+        var campoFecha = document.getElementById('fechaNacimiento');
+
+        if (campoUsuario) filtrarEnVivo(campoUsuario, regexUsuario);
+        if (campoCc) filtrarEnVivo(campoCc, regexNumeros);
+        if (campoNombres) filtrarEnVivo(campoNombres, regexLetras);
+        if (campoApellidos) filtrarEnVivo(campoApellidos, regexLetras);
+        if (campoTelefono) filtrarEnVivo(campoTelefono, regexNumeros);
+        if (campoDireccion) filtrarEnVivo(campoDireccion, regexDireccion);
+
+        // ---------- Validaciones completas por campo (se corren en blur y en submit) ----------
+        var validadores = {
+            nombreUsuario: function () {
+                var ok = /^[A-Za-z0-9_]{3,20}$/.test(campoUsuario.value.trim());
+                ok ? marcarValido(campoUsuario) : marcarInvalido(campoUsuario);
+                return ok;
+            },
+            cc: function () {
+                var ok = /^[0-9]{6,10}$/.test(campoCc.value.trim());
+                ok ? marcarValido(campoCc) : marcarInvalido(campoCc);
+                return ok;
+            },
+            contrasena: function () {
+                var ok = /^\S{6,}$/.test(campoContrasena.value);
+                ok ? marcarValido(campoContrasena) : marcarInvalido(campoContrasena);
+                return ok;
+            },
+            confirmarContrasena: function () {
+                var ok = campoConfirmar.value.length > 0 && campoConfirmar.value === campoContrasena.value;
+                ok ? marcarValido(campoConfirmar) : marcarInvalido(campoConfirmar);
+                return ok;
+            },
+            nombres: function () {
+                var ok = /^[A-Za-zÁÉÍÓÚÑÜáéíóúñü\s]{2,50}$/.test(campoNombres.value.trim());
+                ok ? marcarValido(campoNombres) : marcarInvalido(campoNombres);
+                return ok;
+            },
+            apellidos: function () {
+                var ok = /^[A-Za-zÁÉÍÓÚÑÜáéíóúñü\s]{2,50}$/.test(campoApellidos.value.trim());
+                ok ? marcarValido(campoApellidos) : marcarInvalido(campoApellidos);
+                return ok;
+            },
+            fechaNacimiento: function () {
+                if (!campoFecha.value) { marcarInvalido(campoFecha); return false; }
+                var fecha = new Date(campoFecha.value + 'T00:00:00');
+                var hoy = new Date();
+                var edad = hoy.getFullYear() - fecha.getFullYear();
+                var m = hoy.getMonth() - fecha.getMonth();
+                if (m < 0 || (m === 0 && hoy.getDate() < fecha.getDate())) edad--;
+                var ok = fecha <= hoy && edad >= 12 && edad <= 100;
+                ok ? marcarValido(campoFecha) : marcarInvalido(campoFecha);
+                return ok;
+            },
+            correo: function () {
+                var ok = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(campoCorreo.value.trim());
+                ok ? marcarValido(campoCorreo) : marcarInvalido(campoCorreo);
+                return ok;
+            },
+            telefono: function () {
+                var ok = /^[0-9]{7,10}$/.test(campoTelefono.value.trim());
+                ok ? marcarValido(campoTelefono) : marcarInvalido(campoTelefono);
+                return ok;
+            },
+            direccion: function () {
+                var ok = campoDireccion.value.trim().length >= 5;
+                ok ? marcarValido(campoDireccion) : marcarInvalido(campoDireccion);
+                return ok;
+            }
+        };
+
+        // Corre validacion completa cuando el usuario sale del campo (blur)
+        Object.keys(validadores).forEach(function (nombreCampo) {
+            var el = document.getElementById(nombreCampo);
+            if (el) el.addEventListener('blur', validadores[nombreCampo]);
+        });
+        // La confirmacion de contrasena tambien se revisa si cambia la contrasena original
+        if (campoContrasena) campoContrasena.addEventListener('input', function () {
+            if (campoConfirmar.value.length > 0) validadores.confirmarContrasena();
+        });
+
+        // ---------- Validacion al enviar ----------
+        form.addEventListener('submit', function (e) {
+            var todoValido = true;
+            var primerInvalido = null;
+
+            Object.keys(validadores).forEach(function (nombreCampo) {
+                var el = document.getElementById(nombreCampo);
+                if (!el) return;
+                var ok = validadores[nombreCampo]();
+                if (!ok) {
+                    todoValido = false;
+                    if (!primerInvalido) primerInvalido = el;
+                }
+            });
+
+            if (!todoValido) {
+                e.preventDefault();
+                primerInvalido.focus();
+                primerInvalido.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        });
+    });
+    </script>
+</body>
+</html>

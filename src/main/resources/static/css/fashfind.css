@@ -1,0 +1,201 @@
+/* FashFind - identidad visual sobre Bootstrap 5.
+   Este archivo NO reemplaza Bootstrap, solo ajusta color de marca. */
+
+:root {
+    --ff-rosa: #e91e8c;
+    --ff-rosa-oscuro: #c2185b;
+    --ff-oscuro: #1a1a2e;
+}
+
+.bg-ff {
+    background-color: var(--ff-oscuro) !important;
+}
+
+.text-ff {
+    color: var(--ff-rosa) !important;
+}
+
+.btn-ff {
+    background-color: var(--ff-rosa);
+    border-color: var(--ff-rosa);
+    color: #fff;
+}
+
+.btn-ff:hover {
+    background-color: var(--ff-rosa-oscuro);
+    border-color: var(--ff-rosa-oscuro);
+    color: #fff;
+}
+
+.link-ff {
+    color: var(--ff-rosa);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.link-ff:hover {
+    color: var(--ff-rosa-oscuro);
+    text-decoration: underline;
+}
+
+/* Panel con la imagen de fondo, usado en login/registro junto a la tarjeta del formulario */
+.ff-login-bg {
+    background: url('/images/fondoLogin.jpeg') center/cover no-repeat fixed;
+    position: relative;
+}
+
+.ff-login-bg::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(26, 26, 46, 0.55);
+    z-index: 0;
+}
+
+.ff-login-bg .container {
+    position: relative;
+    z-index: 1;
+}
+
+.ff-card-login {
+    background: rgba(255, 255, 255, 0.95);
+}
+/* Botón "volver" sobre el fondo con overlay oscuro */
+.ff-btn-back {
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    color: #fff;
+    backdrop-filter: blur(2px);
+    font-weight: 600;
+}
+
+.ff-btn-back:hover {
+    background-color: var(--ff-rosa);
+    border-color: var(--ff-rosa);
+    color: #fff;
+}
+
+/* Layout de panel con menu lateral (admin, vendedor, domiciliario) */
+.ff-sidebar {
+    background-color: var(--ff-oscuro);
+    min-height: 100vh;
+    width: 250px;
+    flex-shrink: 0;
+}
+
+.ff-sidebar .ff-sidebar-brand {
+    color: #fff;
+    padding: 1.5rem 1.25rem 1rem;
+    font-weight: 700;
+    font-size: 1.1rem;
+}
+
+.ff-sidebar .nav-link {
+    color: rgba(255, 255, 255, 0.8);
+    padding: .75rem 1.25rem;
+    border-left: 4px solid transparent;
+}
+
+.ff-sidebar .nav-link i {
+    width: 1.3rem;
+    display: inline-block;
+}
+
+.ff-sidebar .nav-link:hover {
+    background-color: rgba(233, 30, 140, 0.15);
+    color: #fff;
+}
+
+.ff-sidebar .nav-link.active {
+    background-color: var(--ff-rosa);
+    color: #fff;
+    border-left-color: #fff;
+    font-weight: 600;
+}
+
+.ff-sidebar .ff-sidebar-salir {
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
+    margin-top: auto;
+}
+
+.ff-topbar {
+    background-color: var(--ff-rosa);
+    color: #fff;
+}
+
+.ff-stat-card {
+    border-top: 4px solid var(--ff-rosa);
+}
+
+/* Sidebar fijo: no se mueve al hacer scroll ni cambia entre paginas */
+.ff-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    overflow-y: auto;
+    z-index: 1030;
+}
+
+.ff-content {
+    margin-left: 250px;
+    min-height: 100vh;
+}
+
+/* Botones de accion en tablas: iconos circulares */
+.btn-ff-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    transition: transform .15s ease, box-shadow .15s ease;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+    text-decoration: none;
+}
+
+.btn-ff-icon:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+
+.btn-ff-icon.editar { background-color: rgba(233, 30, 140, 0.12); color: var(--ff-rosa-oscuro); }
+.btn-ff-icon.editar:hover { background-color: var(--ff-rosa); color: #fff; }
+
+.btn-ff-icon.eliminar { background-color: rgba(220, 53, 69, 0.12); color: #dc3545; }
+.btn-ff-icon.eliminar:hover { background-color: #dc3545; color: #fff; }
+
+.btn-ff-icon.reactivar { background-color: rgba(25, 135, 84, 0.12); color: #198754; }
+.btn-ff-icon.reactivar:hover { background-color: #198754; color: #fff; }
+
+/* Tarjeta que envuelve las tablas */
+.ff-card-table {
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 2px 12px rgba(26, 26, 46, 0.06);
+    overflow: hidden;
+}
+
+.ff-card-table table { margin-bottom: 0; }
+.ff-card-table thead { background-color: #faf5f9; }
+.ff-card-table thead th {
+    color: var(--ff-oscuro);
+    font-size: .8rem;
+    text-transform: uppercase;
+    letter-spacing: .03em;
+    border-bottom: 2px solid #f0dbe9;
+}
+.ff-card-table tbody tr:hover { background-color: #fdf6fa; }
+
+/* Insignias de nivel de stock / estado */
+.badge-stock {
+    padding: .4em .8em;
+    border-radius: 50rem;
+    font-weight: 600;
+    font-size: .78rem;
+}
+.badge-stock-bajo { background-color: #fde2e4; color: #b3261e; }
+.badge-stock-normal { background-color: #e2f4e6; color: #1a7a3a; }
+.badge-stock-sobre { background-color: #e6e0f8; color: #5b3aa8; }

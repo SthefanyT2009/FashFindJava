@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Mi cuenta - FashFind</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="/css/fashfind.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+<nav th:replace="~{fragments/navbar :: navbar('cliente')}"></nav>
+
+<!-- Hero con saludo -->
+<section class="bg-ff text-white py-5">
+    <div class="container py-4 text-center">
+        <h1 class="fw-bold display-6">
+            Hola, <span th:text="${usuarioActual != null} ? ${usuarioActual.nombres} : 'de nuevo'">Cliente</span>
+        </h1>
+        <p class="lead text-white-50 mb-0">Sigue viendo lo nuevo o revisa tus pedidos.</p>
+    </div>
+</section>
+
+<div class="container py-4">
+    <div class="row g-3 mb-4">
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm h-100 p-3">
+                <i class="bi bi-box-seam fs-3 text-ff"></i>
+                <p class="fw-semibold mt-2 mb-0">Mis pedidos</p>
+                <p class="text-muted small mb-0">Aun no tienes pedidos registrados.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm h-100 p-3">
+                <i class="bi bi-heart fs-3 text-ff"></i>
+                <p class="fw-semibold mt-2 mb-0">Favoritos</p>
+                <p class="text-muted small mb-0">Guarda prendas para verlas despues.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm h-100 p-3">
+                <i class="bi bi-person-gear fs-3 text-ff"></i>
+                <p class="fw-semibold mt-2 mb-0">Mis datos</p>
+                <p class="text-muted small mb-0">Actualiza direccion y contacto.</p>
+            </div>
+        </div>
+    </div>
+
+    <h4 class="fw-bold mb-3" style="color:#1a1a2e;">Sigue comprando</h4>
+    <div class="row g-3">
+        <div class="col-6 col-md-3" th:each="i : ${#numbers.sequence(1, 4)}">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="d-flex align-items-center justify-content-center bg-light" style="height: 180px;">
+                    <i class="bi bi-image fs-1 text-muted"></i>
+                </div>
+                <div class="card-body">
+                    <p class="fw-semibold mb-1">Producto de ejemplo</p>
+                    <p class="text-ff fw-bold mb-0">$0</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

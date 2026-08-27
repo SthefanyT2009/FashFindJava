@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title th:text="${esNuevo} ? 'Nuevo Producto - FashFind' : 'Editar Producto - FashFind'"></title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="/css/fashfind.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+<div class="container py-5" style="max-width: 560px;">
+    <div class="card shadow-sm border-0 p-4" style="border-radius: 16px;">
+        <h4 class="fw-bold mb-4">
+            <i class="bi bi-bag-plus me-2 text-ff"></i>
+            <span th:text="${esNuevo} ? 'Nuevo Producto' : 'Editar Producto'"></span>
+        </h4>
+
+        <form th:object="${producto}"
+              th:action="${esNuevo} ? @{/productos} : @{'/productos/actualizar/' + ${producto.idProducto}}"
+              method="post" enctype="multipart/form-data">
+
+            <div class="mb-3">
+                <label class="form-label">Imagen</label>
+                <input type="file" name="imagenFile" accept="image/*" class="form-control">
+                <img th:if="${producto.imagenBase64 != null}"
+                     th:src="'data:image/jpeg;base64,' + ${producto.imagenBase64}"
+                     style="width:64px;height:64px;object-fit:cover;border-radius:10px;margin-top:8px" />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Nombre Producto</label>
+                <input type="text" th:field="*{nombreProducto}" class="form-control" required maxlength="100">
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Descripcion</label>
+                <input type="text" th:field="*{descripcion}" class="form-control" maxlength="200">
+            </div>
+
+            <div class="row">
+                <div class="col mb-3">
+                    <label class="form-label">Talla</label>
+                    <input type="text" th:field="*{talla}" class="form-control" required maxlength="100">
+                </div>
+                <div class="col mb-3">
+                    <label class="form-label">Color</label>
+                    <input type="text" th:field="*{color}" class="form-control" required maxlength="100">
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Precio</label>
+                <input type="number" th:field="*{precio}" class="form-control" required min="0">
+            </div>
+
+            <div th:if="${esNuevo}" class="row">
+                <div class="col mb-3">
+                    <label class="form-label">Stock Inicial</label>
+                    <input type="number" name="stockInicial" class="form-control" value="0" min="0">
+                </div>
+                <div class="col mb-3">
+                    <label class="form-label">Stock Minimo</label>
+                    <input type="number" name="stockMinimo" class="form-control" value="0" min="0">
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-ff w-100 mb-2" th:text="${esNuevo} ? 'Registrar Producto' : 'Actualizar Producto'"></button>
+            <a th:href="@{/productos}" class="btn btn-outline-secondary w-100">
+                <i class="bi bi-arrow-left me-1"></i>Regresar
+            </a>
+        </form>
+    </div>
+</div>
+
+</body>
+</html>

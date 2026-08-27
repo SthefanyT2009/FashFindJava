@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<aside th:fragment="sidebar(activo)" class="ff-sidebar d-flex flex-column">
+    <div class="ff-sidebar-brand"><i class="bi bi-bag-heart-fill me-2"></i>FashFind</div>
+    <nav class="nav flex-column flex-grow-1">
+        <a class="nav-link" th:classappend="${activo == 'inicio'} ? ' active'" th:href="@{/admin/dashboard}">
+            <i class="bi bi-house-door"></i> Pagina Principal
+        </a>
+        <a class="nav-link" th:classappend="${activo == 'usuarios'} ? ' active'" href="#">
+            <i class="bi bi-people"></i> Gestion de Usuarios
+        </a>
+        <a class="nav-link" th:classappend="${activo == 'ventas'} ? ' active'" href="#">
+            <i class="bi bi-cash-coin"></i> Gestion de Ventas
+        </a>
+        <a class="nav-link" th:classappend="${activo == 'pedidos'} ? ' active'" href="#">
+            <i class="bi bi-cart-check"></i> Gestion de Pedidos
+        </a>
+        <a class="nav-link" th:classappend="${activo == 'productos'} ? ' active'" th:href="@{/productos}">
+            <i class="bi bi-bag"></i> Gestion de Productos
+        </a>
+        <a class="nav-link" th:classappend="${activo == 'inventario'} ? ' active'" th:href="@{/inventario}">
+            <i class="bi bi-boxes"></i> Gestion de Inventario
+        </a>
+    </nav>
+    <form th:action="@{/logout}" method="post" class="ff-sidebar-salir p-3">
+        <button type="submit" class="nav-link btn btn-link text-start p-0 border-0">
+            <i class="bi bi-box-arrow-right"></i> Cerrar Sesion
+        </button>
+    </form>
+</aside>
+
+</body>
+</html>
