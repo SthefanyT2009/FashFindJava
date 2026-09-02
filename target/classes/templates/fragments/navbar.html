@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<body>
+
+<nav th:fragment="navbar(activo)" class="navbar navbar-expand-lg navbar-dark bg-ff px-4">
+    <a class="navbar-brand fw-bold" th:href="@{/}"><i class="bi bi-bag-heart-fill"></i> FashFind</a>
+    <div class="navbar-nav ms-auto align-items-lg-center">
+
+        <a class="nav-link" th:classappend="${activo == 'inicio'} ? 'active fw-bold'" th:href="@{/inicio}">
+            <i class="bi bi-house-door"></i> Inicio
+        </a>
+
+        <a sec:authorize="hasRole('CLIENTE')" class="nav-link"
+           th:classappend="${activo == 'cliente'} ? 'active fw-bold'" th:href="@{/cliente-dashboard}">
+            <i class="bi bi-person-check"></i> Mi cuenta
+        </a>
+
+        <a sec:authorize="hasAnyRole('ADMINISTRADOR','VENDEDOR')" class="nav-link"
+           th:classappend="${activo == 'vendedor'} ? 'active fw-bold'" th:href="@{/vendedor-dashboard}">
+            <i class="bi bi-cash-coin"></i> Ventas
+        </a>
+
+        <a sec:authorize="hasAnyRole('ADMINISTRADOR','DOMICILIARIO')" class="nav-link"
+           th:classappend="${activo == 'domiciliario'} ? 'active fw-bold'" th:href="@{/domiciliario-dashboard}">
+            <i class="bi bi-truck"></i> Domicilios
+        </a>
+
+        <a sec:authorize="hasRole('ADMINISTRADOR')" class="nav-link"
+           th:classappend="${activo == 'admin'} ? 'active fw-bold'" th:href="@{/admin/dashboard}">
+            <i class="bi bi-speedometer2"></i> Administracion
+        </a>
+
+        <span class="nav-link text-white-50" sec:authorize="isAuthenticated()" sec:authentication="name"></span>
+
+        <form sec:authorize="isAuthenticated()" th:action="@{/logout}" method="post" class="d-inline ms-2">
+            <button type="submit" class="btn btn-outline-light btn-sm">
+                <i class="bi bi-box-arrow-right"></i> Salir
+            </button>
+        </form>
+
+        <a sec:authorize="isAnonymous()" class="nav-link" th:href="@{/login}">
+            <i class="bi bi-box-arrow-in-right"></i> Iniciar sesion
+        </a>
+    </div>
+</nav>
+
+</body>
+</html>
