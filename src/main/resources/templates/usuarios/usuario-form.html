@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Crear cuenta - FashFind</title>
+    <title th:text="${esNuevo} ? 'Nuevo Usuario - FashFind' : 'Editar Usuario - FashFind'"></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
     <link href="/css/fashfind.css" rel="stylesheet">
@@ -11,44 +11,65 @@
 <body class="ff-login-bg py-5">
 
     <div class="container">
+        <a th:href="@{/usuarios}" class="btn btn-sm mb-3 ff-btn-back">
+            <i class="bi bi-arrow-left"></i> Volver a Gestion de Usuarios
+        </a>
         <div class="row justify-content-center">
-            <div class="col-lg-7">
+            <div class="col-lg-7 col-md-9">
                 <div class="card shadow border-0 rounded-3 ff-card-login">
                     <div class="card-body p-4 p-md-5">
 
                         <div class="text-center mb-4">
-                            <i class="bi bi-bag-heart-fill fs-1 text-ff"></i>
-                            <h3 class="fw-bold mt-2" style="color:#1a1a2e;">Crear cuenta</h3>
-                            <p class="text-muted small mb-0">Se registra como Cliente</p>
+                            <i class="bi bi-person-gear fs-1 text-ff"></i>
+                            <h3 class="fw-bold mt-2" style="color:#1a1a2e;" th:text="${esNuevo} ? 'Nuevo Usuario' : 'Editar Usuario'"></h3>
+                            <p class="text-muted small mb-0" th:text="${esNuevo} ? 'Crea una cuenta con el cargo que necesites' : 'Actualiza los datos de la cuenta'"></p>
                         </div>
 
                         <div th:if="${error}" class="alert alert-danger py-2" th:text="${error}"></div>
 
-                        <form th:action="@{/registro}" th:object="${usuario}" method="post" id="formRegistro" novalidate>
+                        <form th:object="${usuario}"
+                              th:action="${esNuevo} ? @{/usuarios} : @{'/usuarios/actualizar/' + ${usuario.idUsuario}}"
+                              method="post" id="formUsuario" novalidate>
 
                             <h6 class="text-uppercase text-muted small fw-bold mb-3">Datos de acceso</h6>
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label fw-semibold">Nombre de usuario</label>
-                                    <input type="text" th:field="*{nombreUsuario}" id="nombreUsuario" class="form-control" required minlength="3" autocomplete="off">
-                                    <div class="invalid-feedback" id="invalidFeedbackUsuario">Solo letras, numeros y guion bajo, minimo 3 caracteres.</div>
+                                    <input type="text" th:field="*{nombreUsuario}" id="nombreUsuario" class="form-control"
+                                           required minlength="3" maxlength="20" autocomplete="off">
+                                    <div class="invalid-feedback" id="invalidFeedbackUsuario">Solo letras, numeros y guion bajo, entre 3 y 20 caracteres.</div>
                                     <div id="avisoUsuarioExiste" class="form-text text-danger d-none">Ese nombre de usuario ya esta en uso.</div>
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label fw-semibold">Cedula</label>
-                                    <input type="text" inputmode="numeric" th:field="*{cc}" class="form-control" required>
+                                    <input type="text" inputmode="numeric" th:field="*{cc}" id="cc" class="form-control"
+                                           th:readonly="${!esNuevo}" th:classappend="${!esNuevo} ? ' bg-light' : ''" th:required="${esNuevo}">
                                     <div class="invalid-feedback">Solo numeros, entre 6 y 10 digitos.</div>
+                                    <div class="form-text" th:if="${!esNuevo}">La cedula no se puede modificar.</div>
                                 </div>
                             </div>
-                            <div class="row">
+
+                            <div class="row" th:if="${esNuevo}">
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label fw-semibold">Contrasena</label>
-                                    <input type="password" name="contrasena" id="contrasena" class="form-control" required minlength="6">
-                                    <div class="invalid-feedback">Debe tener minimo 6 caracteres, sin espacios.</div>
+                                    <input type="password" th:field="*{contrasena}" id="contrasena" class="form-control" required minlength="6">
+                                    <div class="invalid-feedback">Minimo 6 caracteres, sin espacios, con mayuscula, minuscula, numero y simbolo.</div>
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label fw-semibold">Confirmar contrasena</label>
                                     <input type="password" name="confirmarContrasena" id="confirmarContrasena" class="form-control" required minlength="6">
+                                    <div class="invalid-feedback">Las contrasenas no coinciden.</div>
+                                </div>
+                            </div>
+                            <div class="row" th:unless="${esNuevo}">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-semibold">Nueva contrasena <span class="text-muted fw-normal">(opcional)</span></label>
+                                    <input type="password" name="nuevaContrasena" id="nuevaContrasena" class="form-control" minlength="6" autocomplete="new-password">
+                                    <div class="invalid-feedback">Si la cambias: minimo 6 caracteres, sin espacios, con mayuscula, minuscula, numero y simbolo.</div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-semibold">Confirmar nueva contrasena</label>
+                                    <input type="password" name="confirmarContrasena" id="confirmarContrasena" class="form-control" minlength="6" autocomplete="new-password">
                                     <div class="invalid-feedback">Las contrasenas no coinciden.</div>
                                 </div>
                             </div>
@@ -57,28 +78,33 @@
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label fw-semibold">Nombres</label>
-                                    <input type="text" th:field="*{nombres}" class="form-control" required>
-                                    <div class="invalid-feedback">Solo se permiten letras y espacios.</div>
+                                    <input type="text" th:field="*{nombres}" id="nombres" class="form-control"
+                                           th:readonly="${!esNuevo}" th:classappend="${!esNuevo} ? ' bg-light' : ''" required>
+                                    <div class="invalid-feedback">Solo letras y espacios, entre 2 y 50 caracteres.</div>
+                                    <div class="form-text" th:if="${!esNuevo}">El nombre no se puede modificar.</div>
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label fw-semibold">Apellidos</label>
-                                    <input type="text" th:field="*{apellidos}" class="form-control" required>
-                                    <div class="invalid-feedback">Solo se permiten letras y espacios.</div>
+                                    <input type="text" th:field="*{apellidos}" id="apellidos" class="form-control"
+                                           th:readonly="${!esNuevo}" th:classappend="${!esNuevo} ? ' bg-light' : ''" required>
+                                    <div class="invalid-feedback">Solo letras y espacios, entre 2 y 50 caracteres.</div>
+                                    <div class="form-text" th:if="${!esNuevo}">El apellido no se puede modificar.</div>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label fw-semibold">Genero</label>
-                                    <select th:field="*{genero}" class="form-select">
-                                        <option value="">Prefiero no decirlo</option>
+                                    <select th:field="*{genero}" id="genero" class="form-select" required>
+                                        <option value="" disabled>Selecciona un genero</option>
                                         <option value="Femenino">Femenino</option>
                                         <option value="Masculino">Masculino</option>
                                     </select>
+                                    <div class="invalid-feedback">Selecciona Femenino o Masculino.</div>
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label fw-semibold">Fecha de nacimiento</label>
-                                    <input type="date" th:field="*{fechaNacimiento}" class="form-control" required>
-                                    <div class="invalid-feedback">Debes tener entre 12 y 100 anos, y la fecha no puede ser futura.</div>
+                                    <input type="date" th:field="*{fechaNacimiento}" th:max="${T(java.time.LocalDate).now()}" id="fechaNacimiento" class="form-control" required>
+                                    <div class="invalid-feedback">Debe tener entre 12 y 100 anos, y la fecha no puede ser futura.</div>
                                 </div>
                             </div>
 
@@ -86,41 +112,49 @@
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label fw-semibold">Correo</label>
-                                    <input type="email" th:field="*{correo}" class="form-control" required>
+                                    <input type="email" th:field="*{correo}" id="correo" class="form-control" required maxlength="100">
                                     <div class="invalid-feedback">Ingresa un correo valido, ej: nombre@correo.com</div>
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label fw-semibold">Telefono</label>
-                                    <input type="text" inputmode="numeric" th:field="*{telefono}" class="form-control" required>
+                                    <input type="text" inputmode="numeric" th:field="*{telefono}" id="telefono" class="form-control" required>
                                     <div class="invalid-feedback">Solo numeros, entre 7 y 10 digitos.</div>
                                 </div>
                             </div>
-                            <div class="mb-4">
+                            <div class="mb-3">
                                 <label class="form-label fw-semibold">Direccion</label>
-                                <input type="text" th:field="*{direccion}" class="form-control" required minlength="5">
-                                <div class="invalid-feedback">Ingresa una direccion valida (minimo 5 caracteres).</div>
+                                <input type="text" th:field="*{direccion}" id="direccion" class="form-control" required minlength="5" maxlength="100">
+                                <div class="invalid-feedback">Ingresa una direccion valida (entre 5 y 100 caracteres).</div>
                             </div>
 
-                            <button type="submit" class="btn btn-ff w-100 fw-semibold py-2">
-                                <i class="bi bi-person-plus me-1"></i> Crear cuenta
-                            </button>
+                            <h6 class="text-uppercase text-muted small fw-bold mb-3 mt-4">Rol en el sistema</h6>
+                            <div class="mb-4">
+                                <label class="form-label fw-semibold">Cargo</label>
+                                <select th:field="*{cargo}" id="cargo" class="form-select" required>
+                                    <option value="">Selecciona un cargo</option>
+                                    <option value="Administrador">Administrador</option>
+                                    <option value="Vendedor">Vendedor</option>
+                                    <option value="Domiciliario">Domiciliario</option>
+                                    <option value="Cliente">Cliente</option>
+                                </select>
+                                <div class="invalid-feedback">Debes seleccionar un cargo.</div>
+                            </div>
+
+                            <button type="submit" class="btn btn-ff w-100 fw-semibold py-2 mt-2"
+                                    th:text="${esNuevo} ? 'Registrar Usuario' : 'Actualizar Usuario'"></button>
                         </form>
-
-                        <p class="text-center text-muted small mt-4 mb-0">
-                            Ya tienes cuenta?
-                            <a th:href="@{/login}" class="link-ff">Inicia sesion</a>
-                        </p>
-
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <script>
+    <script th:inline="javascript">
     document.addEventListener('DOMContentLoaded', function () {
 
-        var form = document.getElementById('formRegistro');
+        var esNuevo = /*[[${esNuevo}]]*/ true;
+        var idUsuarioActual = /*[[${usuario.idUsuario}]]*/ null;
+        var form = document.getElementById('formUsuario');
 
         // ---------- Helpers ----------
         function marcarInvalido(input) {
@@ -136,8 +170,8 @@
         }
 
         // Filtra en vivo: borra del input cualquier caracter que no matchee "permitidos"
-        // y marca error momentaneo si se intento escribir algo no permitido.
         function filtrarEnVivo(input, regexNoPermitido) {
+            if (!input) return;
             input.addEventListener('input', function () {
                 var original = input.value;
                 var filtrado = original.replace(regexNoPermitido, '');
@@ -150,7 +184,7 @@
             });
         }
 
-        // ---------- Filtros por campo (bloquean caracteres no permitidos al escribir) ----------
+        // ---------- Campos ----------
         var regexLetras = /[^A-Za-zÁÉÍÓÚÑÜáéíóúñü\s]/g;
         var regexUsuario = /[^A-Za-z0-9_]/g;
         var regexNumeros = /[^0-9]/g;
@@ -163,16 +197,22 @@
         var campoTelefono = document.getElementById('telefono');
         var campoDireccion = document.getElementById('direccion');
         var campoContrasena = document.getElementById('contrasena');
+        var campoNuevaContrasena = document.getElementById('nuevaContrasena');
         var campoConfirmar = document.getElementById('confirmarContrasena');
         var campoCorreo = document.getElementById('correo');
         var campoFecha = document.getElementById('fechaNacimiento');
+        var campoCargo = document.getElementById('cargo');
+        var campoGenero = document.getElementById('genero');
 
-        if (campoUsuario) filtrarEnVivo(campoUsuario, regexUsuario);
-        if (campoCc) filtrarEnVivo(campoCc, regexNumeros);
-        if (campoNombres) filtrarEnVivo(campoNombres, regexLetras);
-        if (campoApellidos) filtrarEnVivo(campoApellidos, regexLetras);
-        if (campoTelefono) filtrarEnVivo(campoTelefono, regexNumeros);
-        if (campoDireccion) filtrarEnVivo(campoDireccion, regexDireccion);
+        // El campo de contrasena "activo" es distinto segun sea creacion o edicion
+        var campoPass = esNuevo ? campoContrasena : campoNuevaContrasena;
+
+        filtrarEnVivo(campoUsuario, regexUsuario);
+        filtrarEnVivo(campoCc, regexNumeros);
+        filtrarEnVivo(campoNombres, regexLetras);
+        filtrarEnVivo(campoApellidos, regexLetras);
+        filtrarEnVivo(campoTelefono, regexNumeros);
+        filtrarEnVivo(campoDireccion, regexDireccion);
 
         // ---------- Aviso en vivo si el nombre de usuario ya existe ----------
         var avisoUsuarioExiste = document.getElementById('avisoUsuarioExiste');
@@ -189,6 +229,9 @@
                 return;
             }
             var url = '/api/usuarios/existe-usuario?nombreUsuario=' + encodeURIComponent(valor);
+            if (!esNuevo && idUsuarioActual) {
+                url += '&id=' + idUsuarioActual;
+            }
             fetch(url)
                 .then(function (resp) { return resp.ok ? resp.json() : null; })
                 .then(function (data) {
@@ -213,36 +256,11 @@
             });
         }
 
-        // ---------- Validaciones de nombre usuario (solo formato) ----------
+        // ---------- Validaciones completas por campo ----------
         var validadores = {
             nombreUsuario: function () {
                 var ok = /^[A-Za-z0-9_]{3,20}$/.test(campoUsuario.value.trim()) && !usuarioEnUso;
                 ok ? marcarValido(campoUsuario) : marcarInvalido(campoUsuario);
-                return ok;
-            },
-            cc: function () {
-                var ok = /^[0-9]{6,10}$/.test(campoCc.value.trim());
-                ok ? marcarValido(campoCc) : marcarInvalido(campoCc);
-                return ok;
-            },
-            contrasena: function () {
-                var ok = /^\S{6,}$/.test(campoContrasena.value);
-                ok ? marcarValido(campoContrasena) : marcarInvalido(campoContrasena);
-                return ok;
-            },
-            confirmarContrasena: function () {
-                var ok = campoConfirmar.value.length > 0 && campoConfirmar.value === campoContrasena.value;
-                ok ? marcarValido(campoConfirmar) : marcarInvalido(campoConfirmar);
-                return ok;
-            },
-            nombres: function () {
-                var ok = /^[A-Za-zÁÉÍÓÚÑÜáéíóúñü\s]{2,50}$/.test(campoNombres.value.trim());
-                ok ? marcarValido(campoNombres) : marcarInvalido(campoNombres);
-                return ok;
-            },
-            apellidos: function () {
-                var ok = /^[A-Za-zÁÉÍÓÚÑÜáéíóúñü\s]{2,50}$/.test(campoApellidos.value.trim());
-                ok ? marcarValido(campoApellidos) : marcarInvalido(campoApellidos);
                 return ok;
             },
             fechaNacimiento: function () {
@@ -257,7 +275,7 @@
                 return ok;
             },
             correo: function () {
-                var ok = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(campoCorreo.value.trim());
+                var ok = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(campoCorreo.value.trim()) && campoCorreo.value.trim().length <= 100;
                 ok ? marcarValido(campoCorreo) : marcarInvalido(campoCorreo);
                 return ok;
             },
@@ -267,11 +285,76 @@
                 return ok;
             },
             direccion: function () {
-                var ok = campoDireccion.value.trim().length >= 5;
+                var len = campoDireccion.value.trim().length;
+                var ok = len >= 5 && len <= 100;
                 ok ? marcarValido(campoDireccion) : marcarInvalido(campoDireccion);
+                return ok;
+            },
+            cargo: function () {
+                var ok = campoCargo.value.trim().length > 0;
+                ok ? marcarValido(campoCargo) : marcarInvalido(campoCargo);
+                return ok;
+            },
+            genero: function () {
+                var ok = campoGenero.value === 'Femenino' || campoGenero.value === 'Masculino';
+                ok ? marcarValido(campoGenero) : marcarInvalido(campoGenero);
                 return ok;
             }
         };
+
+        // Cedula, nombres y apellidos: solo se validan al crear. Al editar quedan
+        // de solo lectura (el servidor los ignora), asi que revalidarlos aqui
+        // bloquearia el envio del formulario para cuentas ya existentes.
+        if (esNuevo) {
+            validadores.cc = function () {
+                var ok = /^[0-9]{6,10}$/.test(campoCc.value.trim());
+                ok ? marcarValido(campoCc) : marcarInvalido(campoCc);
+                return ok;
+            };
+            validadores.nombres = function () {
+                var ok = /^[A-Za-zÁÉÍÓÚÑÜáéíóúñü\s]{2,50}$/.test(campoNombres.value.trim());
+                ok ? marcarValido(campoNombres) : marcarInvalido(campoNombres);
+                return ok;
+            };
+            validadores.apellidos = function () {
+                var ok = /^[A-Za-zÁÉÍÓÚÑÜáéíóúñü\s]{2,50}$/.test(campoApellidos.value.trim());
+                ok ? marcarValido(campoApellidos) : marcarInvalido(campoApellidos);
+                return ok;
+            };
+        }
+
+        // Contrasena: obligatoria al crear; opcional al editar (solo se valida si se escribio algo)
+        if (esNuevo) {
+            validadores.contrasena = function () {
+                var ok = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9\s])\S{6,}$/.test(campoContrasena.value);
+                ok ? marcarValido(campoContrasena) : marcarInvalido(campoContrasena);
+                return ok;
+            };
+            validadores.confirmarContrasena = function () {
+                var ok = campoConfirmar.value.length > 0 && campoConfirmar.value === campoContrasena.value;
+                ok ? marcarValido(campoConfirmar) : marcarInvalido(campoConfirmar);
+                return ok;
+            };
+        } else {
+            validadores.nuevaContrasena = function () {
+                if (campoNuevaContrasena.value.length === 0) {
+                    limpiarEstado(campoNuevaContrasena);
+                    return true;
+                }
+                var ok = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9\s])\S{6,}$/.test(campoNuevaContrasena.value);
+                ok ? marcarValido(campoNuevaContrasena) : marcarInvalido(campoNuevaContrasena);
+                return ok;
+            };
+            validadores.confirmarContrasena = function () {
+                if (campoNuevaContrasena.value.length === 0 && campoConfirmar.value.length === 0) {
+                    limpiarEstado(campoConfirmar);
+                    return true;
+                }
+                var ok = campoConfirmar.value.length > 0 && campoConfirmar.value === campoNuevaContrasena.value;
+                ok ? marcarValido(campoConfirmar) : marcarInvalido(campoConfirmar);
+                return ok;
+            };
+        }
 
         // Corre validacion completa cuando el usuario sale del campo (blur)
         Object.keys(validadores).forEach(function (nombreCampo) {
@@ -279,7 +362,7 @@
             if (el) el.addEventListener('blur', validadores[nombreCampo]);
         });
         // La confirmacion de contrasena tambien se revisa si cambia la contrasena original
-        if (campoContrasena) campoContrasena.addEventListener('input', function () {
+        if (campoPass) campoPass.addEventListener('input', function () {
             if (campoConfirmar.value.length > 0) validadores.confirmarContrasena();
         });
 
@@ -306,5 +389,6 @@
         });
     });
     </script>
+
 </body>
 </html>

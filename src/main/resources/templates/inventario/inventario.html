@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Inventario - FashFind</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="/css/fashfind.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+<div th:replace="~{fragments/sidebar :: sidebar(activo='inventario')}"></div>
+
+<div class="ff-content">
+    <div class="ff-topbar d-flex justify-content-between align-items-center px-4 py-3">
+        <h5 class="mb-0 fw-bold">
+            Gestion de Inventario - <span th:text="${usuarioActual != null} ? ${usuarioActual.nombres} : ''"></span>
+        </h5>
+        <a sec:authorize="hasRole('ADMINISTRADOR')" th:href="@{/inventario/reporte}" class="btn btn-ff-light btn-sm">
+            <i class="bi bi-file-earmark-bar-graph me-1"></i>Reporte de Inventario
+        </a>
+    </div>
+
+    <div class="container-fluid p-4">
+
+        <!-- Toast de éxito -->
+        <div id="toastExito" class="position-fixed bottom-0 end-0 p-3" style="z-index: 11; display:none;" th:if="${exito}">
+            <div class="toast show" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="toast-body d-flex align-items-center bg-success text-white rounded">
+                    <i class="bi bi-check-circle-fill me-2"></i>
+                    <span id="textoToast" th:text="${exito}"></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="ff-filtros">
+            <div class="d-flex gap-2">
+                <input type="text" id="filtroTexto" class="form-control" placeholder="Buscar en inventario (producto, talla, color, precio, stock disponible, nivel, estado)...">
+                <button type="button" id="btnToggleFiltros" class="btn btn-outline-secondary text-nowrap" aria-expanded="false" aria-controls="panelFiltros">
+                    <i class="bi bi-funnel me-1"></i>Filtros
+                </button>
+            </div>
+            <div id="panelFiltros" class="row g-2 align-items-center mt-3 d-none">
+                <div class="col-6 col-md-3">
+                    <select id="filtroTalla" class="form-select">
+                        <option value="">Talla (todas)</option>
+                    </select>
+                </div>
+                <div class="col-6 col-md-3">
+                    <select id="filtroColor" class="form-select">
+                        <option value="">Color (todos)</option>
+                    </select>
+                </div>
+                <div class="col-6 col-md-3">
+                    <select id="filtroNivel" class="form-select">
+                        <option value="">Nivel (todos)</option>
+                        <option value="Bajo Stock">Bajo Stock</option>
+                        <option value="Normal">Normal</option>
+                        <option value="Sobrestock">Sobrestock</option>
+                    </select>
+                </div>
+                <div class="col-6 col-md-3">
+                    <select id="filtroEstado" class="form-select">
+                        <option value="">Estado (todos)</option>
+                        <option value="Activo">Activo</option>
+                        <option value="Inactivo">Inactivo</option>
+                    </select>
+                </div>
+                <div class="col-6 col-md-3">
+                    <input type="number" id="filtroStock" class="form-control" placeholder="Stock disponible" min="0">
+                </div>
+                <div class="col-6 col-md-3">
+                    <button type="button" id="btnLimpiarFiltros" class="btn btn-outline-secondary w-100">
+                        <i class="bi bi-x-circle me-1"></i>Limpiar
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="ff-card-table">
+            <table class="table table-hover align-middle mb-0" id="tablaInventario">
+                <thead>
+                <tr>
+                    <th>Producto</th>
+                    <th>Talla</th>
+                    <th>Color</th>
+                    <th>Precio</th>
+                    <th>Stock Disponible</th>
+                    <th>Stock Minimo</th>
+                    <th>Nivel</th>
+                    <th>Estado</th>
+                    <th class="text-end">
+                        <span sec:authorize="hasRole('ADMINISTRADOR')">Actualizar</span>
+                        <span sec:authorize="hasRole('VENDEDOR')">&nbsp;</span>
+                    </th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:if="${#lists.isEmpty(inventarios)}">
+                    <td colspan="9" class="text-center text-muted py-4">No hay inventario registrado.</td>
+                </tr>
+                <tr th:each="inv : ${inventarios}"
+                    th:attr="data-search=${#strings.toLowerCase(inv.producto.nombreProducto + ' ' + inv.producto.talla + ' ' + inv.producto.color + ' ' + inv.producto.precio + ' ' + inv.stockDisponible + ' ' + inv.nivelStock + ' ' + inv.estado)},
+                             data-talla=${inv.producto.talla},
+                             data-color=${inv.producto.color},
+                             data-stock=${inv.stockDisponible},
+                             data-nivel=${inv.nivelStock},
+                             data-estado=${inv.estado}">
+                    <td th:text="${inv.producto.nombreProducto}" class="fw-semibold"></td>
+                    <td th:text="${inv.producto.talla}"></td>
+                    <td th:text="${inv.producto.color}"></td>
+                    <td th:text="'$' + ${inv.producto.precio}"></td>
+                    <td th:text="${inv.stockDisponible}"></td>
+                    <td th:text="${inv.stockMinimo}"></td>
+                    <td>
+                        <span class="badge-stock"
+                              th:classappend="${inv.nivelStock == 'Bajo Stock'} ? 'badge-stock-bajo' : (${inv.nivelStock == 'Sobrestock'} ? 'badge-stock-sobre' : 'badge-stock-normal')"
+                              th:text="${inv.nivelStock}"></span>
+                    </td>
+                    <td>
+                        <span class="badge-stock" th:classappend="${inv.estado == 'Activo'} ? 'badge-stock-normal' : 'badge-stock-bajo'"
+                              th:text="${inv.estado}"></span>
+                    </td>
+                    <td class="text-end">
+                        <form sec:authorize="hasRole('ADMINISTRADOR')" th:action="@{'/inventario/actualizar/' + ${inv.idInventario}}" method="post" class="d-flex gap-1 justify-content-end">
+                            <input type="number" name="stockDisponible" th:value="${inv.stockDisponible}" class="form-control form-control-sm" style="width:75px" min="0">
+                            <input type="number" name="stockMinimo" th:value="${inv.stockMinimo}" class="form-control form-control-sm" style="width:75px" min="0">
+                            <button type="submit" class="btn-ff-icon editar" title="Guardar">
+                                <i class="bi bi-check-lg"></i>
+                            </button>
+                        </form>
+                        <span sec:authorize="hasRole('VENDEDOR')" class="text-muted small">
+                            <i class="bi bi-eye me-1"></i>Solo consulta
+                        </span>
+                    </td>
+                </tr>
+                <tr id="filaSinResultados" class="ff-filtros-vacio">
+                    <td colspan="9" class="text-center text-muted py-4">Ningun producto de inventario coincide con la busqueda.</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script th:inline="none">
+    (function () {
+        const tabla = document.getElementById('tablaInventario');
+        if (!tabla) return;
+
+        const filas = Array.from(tabla.querySelectorAll('tbody tr'))
+            .filter(fila => fila.hasAttribute('data-search'));
+        const filaSinResultados = document.getElementById('filaSinResultados');
+
+        const inputTexto = document.getElementById('filtroTexto');
+        const selectTalla = document.getElementById('filtroTalla');
+        const selectColor = document.getElementById('filtroColor');
+        const selectNivel = document.getElementById('filtroNivel');
+        const selectEstado = document.getElementById('filtroEstado');
+        const inputStock = document.getElementById('filtroStock');
+        const btnLimpiar = document.getElementById('btnLimpiarFiltros');
+        const btnToggleFiltros = document.getElementById('btnToggleFiltros');
+        const panelFiltros = document.getElementById('panelFiltros');
+
+        btnToggleFiltros.addEventListener('click', () => {
+            panelFiltros.classList.toggle('d-none');
+            const abierto = !panelFiltros.classList.contains('d-none');
+            btnToggleFiltros.setAttribute('aria-expanded', String(abierto));
+            btnToggleFiltros.classList.toggle('active', abierto);
+        });
+
+        function llenarOpciones(select, atributo) {
+            const valores = new Set(filas.map(f => f.getAttribute(atributo)).filter(Boolean));
+            Array.from(valores).sort().forEach(valor => {
+                const opcion = document.createElement('option');
+                opcion.value = valor;
+                opcion.textContent = valor;
+                select.appendChild(opcion);
+            });
+        }
+
+        llenarOpciones(selectTalla, 'data-talla');
+        llenarOpciones(selectColor, 'data-color');
+
+        function aplicarFiltros() {
+            const texto = inputTexto.value.trim().toLowerCase();
+            const talla = selectTalla.value;
+            const color = selectColor.value;
+            const nivel = selectNivel.value;
+            const estado = selectEstado.value;
+            const stock = inputStock.value !== '' ? Number(inputStock.value) : null;
+            let visibles = 0;
+
+            filas.forEach(fila => {
+                const stockFila = Number(fila.getAttribute('data-stock'));
+                const coincideTexto = !texto || fila.getAttribute('data-search').includes(texto);
+                const coincideTalla = !talla || fila.getAttribute('data-talla') === talla;
+                const coincideColor = !color || fila.getAttribute('data-color') === color;
+                const coincideNivel = !nivel || fila.getAttribute('data-nivel') === nivel;
+                const coincideEstado = !estado || fila.getAttribute('data-estado') === estado;
+                const coincideStock = stock === null || stockFila === stock;
+                const mostrar = coincideTexto && coincideTalla && coincideColor && coincideNivel
+                    && coincideEstado && coincideStock;
+
+                fila.classList.toggle('d-none', !mostrar);
+                if (mostrar) visibles++;
+            });
+
+            filaSinResultados.classList.toggle('ff-filtros-vacio', visibles !== 0);
+        }
+
+        [inputTexto, selectTalla, selectColor, selectNivel, selectEstado, inputStock].forEach(el => {
+            el.addEventListener('input', aplicarFiltros);
+            el.addEventListener('change', aplicarFiltros);
+        });
+
+        btnLimpiar.addEventListener('click', () => {
+            inputTexto.value = '';
+            selectTalla.value = '';
+            selectColor.value = '';
+            selectNivel.value = '';
+            selectEstado.value = '';
+            inputStock.value = '';
+            aplicarFiltros();
+        });
+    })();
+
+    // Mostrar toast de éxito por 4 segundos
+    (function () {
+        const toastElement = document.getElementById('toastExito');
+        if (toastElement) {
+            toastElement.style.display = 'block';
+            setTimeout(function () {
+                toastElement.style.display = 'none';
+            }, 4000);
+        }
+    })();
+</script>
+
+</body>
+</html>

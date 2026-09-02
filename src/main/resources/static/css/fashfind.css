@@ -27,6 +27,23 @@
     color: #fff;
 }
 
+/* Boton alternativo para topbars rosas: fondo blanco, alto contraste.
+   Se usa en botones que deben resaltar sobre .ff-topbar (Nuevo Producto,
+   Reporte de Inventario), ya que btn-ff se confunde con el fondo rosa. */
+.btn-ff-light {
+    background-color: #fff;
+    border-color: #fff;
+    color: var(--ff-rosa-oscuro);
+    font-weight: 600;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.btn-ff-light:hover {
+    background-color: var(--ff-oscuro);
+    border-color: var(--ff-oscuro);
+    color: #fff;
+}
+
 .link-ff {
     color: var(--ff-rosa);
     text-decoration: none;
@@ -59,6 +76,28 @@
 
 .ff-card-login {
     background: rgba(255, 255, 255, 0.95);
+}
+
+/* Fondo con imagen para el detalle de venta (recibo), dentro de .ff-content
+   (sidebar y topbar quedan igual, solo cambia el area de contenido). */
+.ff-recibo-bg {
+    background: url('/images/fondoLogin.jpeg') center/cover no-repeat fixed;
+    min-height: calc(100vh - 64px);
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+.ff-recibo-bg::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(26, 26, 46, 0.55);
+}
+
+.ff-recibo-bg > .container-fluid {
+    position: relative;
+    z-index: 1;
 }
 /* Botón "volver" sobre el fondo con overlay oscuro */
 .ff-btn-back {
@@ -199,3 +238,28 @@
 .badge-stock-bajo { background-color: #fde2e4; color: #b3261e; }
 .badge-stock-normal { background-color: #e2f4e6; color: #1a7a3a; }
 .badge-stock-sobre { background-color: #e6e0f8; color: #5b3aa8; }
+
+/* Barra de busqueda y filtros, arriba de cada tabla */
+.ff-filtros {
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 2px 12px rgba(26, 26, 46, 0.06);
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+
+.ff-filtros .form-control:focus,
+.ff-filtros .form-select:focus {
+    border-color: var(--ff-rosa);
+    box-shadow: 0 0 0 .2rem rgba(233, 30, 140, 0.15);
+}
+
+.ff-filtros-vacio {
+    display: none;
+}
+
+.ff-filtros #btnToggleFiltros.active {
+    background-color: var(--ff-rosa);
+    border-color: var(--ff-rosa);
+    color: #fff;
+}

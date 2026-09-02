@@ -49,7 +49,8 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 // Recursos publicos: estilos, imagenes, login, registro y pagina de inicio
                 .requestMatchers("/css/**", "/js/**", "/images/**", "/webjars/**",
-                                  "/login", "/registro", "/error", "/", "/inicio").permitAll()
+                                  "/login", "/registro", "/error", "/", "/inicio",
+                                  "/api/usuarios/existe-usuario").permitAll()
 
                 // Perfil propio: cualquier usuario autenticado
                 .requestMatchers("/perfil/**").authenticated()
@@ -60,8 +61,19 @@ public class SecurityConfig {
                 // Carrito y pedidos: Cliente
                 .requestMatchers("/carrito/**", "/pedidos/**").hasAnyRole("CLIENTE", "ADMINISTRADOR")
 
-                // Gestion de ventas e inventario
-                .requestMatchers("/vendedor-dashboard/**", "/inventario/**", "/productos/**").hasAnyRole("ADMINISTRADOR", "VENDEDOR")
+                // --- Ventas: el Vendedor solo puede registrar (crear) y consultar (listar/ver detalle) ---
+                // Editar, eliminar/inactivar, reactivar y los reportes de ventas son exclusivos del Administrador.
+                .requestMatchers("/ventas/editar/**", "/ventas/actualizar/**", "/ventas/eliminar/**",
+                                  "/ventas/reactivar/**", "/ventas/reporte/**").hasRole("ADMINISTRADOR")
+
+                // --- Inventario: el Vendedor solo puede consultar (listar), nunca actualizar stock ni ver el reporte ---
+                .requestMatchers("/inventario/actualizar/**", "/inventario/reporte/**").hasRole("ADMINISTRADOR")
+
+                // --- Productos: gestion exclusiva del Administrador ---
+                .requestMatchers("/productos/**").hasRole("ADMINISTRADOR")
+
+                // Resto de rutas de ventas (listar, ver detalle, registrar) e inventario (listar) + panel del vendedor
+                .requestMatchers("/vendedor-dashboard/**", "/inventario/**", "/ventas/**").hasAnyRole("ADMINISTRADOR", "VENDEDOR")
 
                 // Entregas asignadas al domiciliario
                 .requestMatchers("/domiciliario-dashboard/**").hasAnyRole("DOMICILIARIO", "ADMINISTRADOR")

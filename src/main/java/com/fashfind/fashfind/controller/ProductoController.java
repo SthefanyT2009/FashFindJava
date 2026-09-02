@@ -29,10 +29,13 @@ public class ProductoController {
     }
 
     @GetMapping("/productos")
-    public String listar(Model model, Authentication authentication) {
+    public String listar(@RequestParam(required = false) String exito, Model model, Authentication authentication) {
         agregarUsuarioAlModelo(model, authentication);
         model.addAttribute("productos", productoService.listarProductos());
-        return "productos";
+        if (exito != null) {
+            model.addAttribute("exito", exito);
+        }
+        return "productos/productos";
     }
 
     @GetMapping("/productos/nuevo")
@@ -40,7 +43,7 @@ public class ProductoController {
         agregarUsuarioAlModelo(model, authentication);
         model.addAttribute("producto", new Producto());
         model.addAttribute("esNuevo", true);
-        return "producto-form";
+        return "productos/producto-form";
     }
 
     @GetMapping("/productos/editar/{id}")
@@ -48,7 +51,7 @@ public class ProductoController {
         agregarUsuarioAlModelo(model, authentication);
         model.addAttribute("producto", productoService.obtenerPorId(id));
         model.addAttribute("esNuevo", false);
-        return "producto-form";
+        return "productos/producto-form";
     }
 
     @PostMapping("/productos")
@@ -60,7 +63,8 @@ public class ProductoController {
             producto.setImagen(imagenFile.getBytes());
         }
         productoService.crearProducto(producto, stockInicial, stockMinimo);
-        return "redirect:/productos";
+        return "redirect:/productos?exito=" + java.net.URLEncoder.encode("Producto creado con exito.",
+                java.nio.charset.StandardCharsets.UTF_8);
     }
 
     @PostMapping("/productos/actualizar/{id}")
@@ -71,19 +75,22 @@ public class ProductoController {
             producto.setImagen(imagenFile.getBytes());
         }
         productoService.actualizarProducto(id, producto);
-        return "redirect:/productos";
+        return "redirect:/productos?exito=" + java.net.URLEncoder.encode("Producto actualizado con exito.",
+                java.nio.charset.StandardCharsets.UTF_8);
     }
 
     @PostMapping("/productos/eliminar/{id}")
     public String eliminar(@PathVariable Integer id) {
         productoService.eliminarProducto(id);
-        return "redirect:/productos";
+        return "redirect:/productos?exito=" + java.net.URLEncoder.encode("Producto desactivado con exito.",
+                java.nio.charset.StandardCharsets.UTF_8);
     }
 
     @PostMapping("/productos/reactivar/{id}")
     public String reactivar(@PathVariable Integer id) {
         productoService.reactivarProducto(id);
-        return "redirect:/productos";
+        return "redirect:/productos?exito=" + java.net.URLEncoder.encode("Producto reactivado con exito.",
+                java.nio.charset.StandardCharsets.UTF_8);
     }
 
     private void agregarUsuarioAlModelo(Model model, Authentication authentication) {

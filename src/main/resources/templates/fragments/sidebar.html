@@ -1,27 +1,33 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <body>
 
+<!--
+  Sidebar compartido entre las vistas de Administrador y Vendedor
+  (usuarios, productos, ventas, inventario). Los enlaces se muestran u
+  ocultan segun el rol con sec:authorize, y "Pagina Principal" apunta al
+  panel de inicio que le corresponde a cada rol.
+-->
 <aside th:fragment="sidebar(activo)" class="ff-sidebar d-flex flex-column">
     <div class="ff-sidebar-brand"><i class="bi bi-bag-heart-fill me-2"></i>FashFind</div>
     <nav class="nav flex-column flex-grow-1">
-        <a class="nav-link" th:classappend="${activo == 'inicio'} ? ' active'" th:href="@{/admin/dashboard}">
+        <a sec:authorize="hasRole('ADMINISTRADOR')" class="nav-link" th:classappend="${activo == 'inicio'} ? ' active'" th:href="@{/admin/dashboard}">
             <i class="bi bi-house-door"></i> Pagina Principal
         </a>
-        <a class="nav-link" th:classappend="${activo == 'usuarios'} ? ' active'" href="#">
+        <a sec:authorize="hasRole('VENDEDOR')" class="nav-link" th:classappend="${activo == 'inicio'} ? ' active'" th:href="@{/vendedor-dashboard}">
+            <i class="bi bi-house-door"></i> Pagina Principal
+        </a>
+        <a sec:authorize="hasRole('ADMINISTRADOR')" class="nav-link" th:classappend="${activo == 'usuarios'} ? ' active'" th:href="@{/usuarios}">
             <i class="bi bi-people"></i> Gestion de Usuarios
         </a>
-        <a class="nav-link" th:classappend="${activo == 'ventas'} ? ' active'" href="#">
-            <i class="bi bi-cash-coin"></i> Gestion de Ventas
+        <a class="nav-link" th:classappend="${activo == 'ventas'} ? ' active'" th:href="@{/ventas}">
+            <i class="bi bi-cash-coin"></i> <span sec:authorize="hasRole('ADMINISTRADOR')">Gestion de Ventas</span><span sec:authorize="hasRole('VENDEDOR')">Ventas</span>
         </a>
-        <a class="nav-link" th:classappend="${activo == 'pedidos'} ? ' active'" href="#">
-            <i class="bi bi-cart-check"></i> Gestion de Pedidos
-        </a>
-        <a class="nav-link" th:classappend="${activo == 'productos'} ? ' active'" th:href="@{/productos}">
+        <a sec:authorize="hasRole('ADMINISTRADOR')" class="nav-link" th:classappend="${activo == 'productos'} ? ' active'" th:href="@{/productos}">
             <i class="bi bi-bag"></i> Gestion de Productos
         </a>
         <a class="nav-link" th:classappend="${activo == 'inventario'} ? ' active'" th:href="@{/inventario}">
-            <i class="bi bi-boxes"></i> Gestion de Inventario
+            <i class="bi bi-boxes"></i> <span sec:authorize="hasRole('ADMINISTRADOR')">Gestion de Inventario</span><span sec:authorize="hasRole('VENDEDOR')">Inventario</span>
         </a>
     </nav>
     <form th:action="@{/logout}" method="post" class="ff-sidebar-salir p-3">
