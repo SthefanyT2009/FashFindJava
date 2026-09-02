@@ -8,10 +8,10 @@
         <a class="nav-link" th:classappend="${activo == 'inicio'} ? ' active'" th:href="@{/admin/dashboard}">
             <i class="bi bi-house-door"></i> Pagina Principal
         </a>
-        <a class="nav-link" th:classappend="${activo == 'usuarios'} ? ' active'" href="#">
+        <a class="nav-link" th:classappend="${activo == 'usuarios'} ? ' active'" th:href="@{/usuarios}">
             <i class="bi bi-people"></i> Gestion de Usuarios
         </a>
-        <a class="nav-link" th:classappend="${activo == 'ventas'} ? ' active'" href="#">
+        <a class="nav-link" th:classappend="${activo == 'ventas'} ? ' active'" th:href="@{/ventas}">
             <i class="bi bi-cash-coin"></i> Gestion de Ventas
         </a>
         <a class="nav-link" th:classappend="${activo == 'pedidos'} ? ' active'" href="#">

@@ -2,27 +2,29 @@
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8"/>
-    <title>Productos - FashFind</title>
+    <title>Usuarios - FashFind</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
     <link href="/css/fashfind.css" rel="stylesheet">
 </head>
 <body class="bg-light">
 
-<div th:replace="~{fragments/sidebar :: sidebar(activo='productos')}"></div>
+<div th:replace="~{fragments/sidebar :: sidebar(activo='usuarios')}"></div>
 
 <div class="ff-content">
     <div class="ff-topbar d-flex justify-content-between align-items-center px-4 py-3">
         <h5 class="mb-0 fw-bold">
-            Gestion de Productos - <span th:text="${usuarioActual != null} ? ${usuarioActual.nombres} : ''"></span>
+            Gestion de Usuarios - <span th:text="${usuarioActual != null} ? ${usuarioActual.nombres} : ''"></span>
         </h5>
-        <a th:href="@{/productos/nuevo}" class="btn btn-ff-light btn-sm">
-            <i class="bi bi-plus-lg me-1"></i>Nuevo Producto
+        <a th:href="@{/usuarios/nuevo}" class="btn btn-ff-light btn-sm">
+            <i class="bi bi-person-plus me-1"></i>Nuevo Usuario
         </a>
     </div>
 
     <div class="container-fluid p-4">
 
+        <div th:if="${error}" class="alert alert-danger py-2" th:text="${error}"></div>
+        
         <!-- Toast de éxito -->
         <div id="toastExito" class="position-fixed bottom-0 end-0 p-3" style="z-index: 11; display:none;" th:if="${exito}">
             <div class="toast show" role="alert" aria-live="assertive" aria-atomic="true">
@@ -35,30 +37,29 @@
 
         <div class="ff-filtros">
             <div class="d-flex gap-2">
-                <input type="text" id="filtroTexto" class="form-control" placeholder="Buscar en productos (nombre, descripcion, talla, color, precio, estado)...">
+                <input type="text" id="filtroTexto" class="form-control" placeholder="Buscar en usuarios (nombre, usuario, cedula, genero, direccion, correo, telefono, cargo, estado)...">
                 <button type="button" id="btnToggleFiltros" class="btn btn-outline-secondary text-nowrap" aria-expanded="false" aria-controls="panelFiltros">
                     <i class="bi bi-funnel me-1"></i>Filtros
                 </button>
             </div>
             <div id="panelFiltros" class="row g-2 align-items-center mt-3 d-none">
-                <div class="col-6 col-md-3">
-                    <select id="filtroTalla" class="form-select">
-                        <option value="">Talla (todas)</option>
+                <div class="col-6 col-md-4">
+                    <select id="filtroCargo" class="form-select">
+                        <option value="">Cargo (todos)</option>
+                        <option value="Administrador">Administrador</option>
+                        <option value="Vendedor">Vendedor</option>
+                        <option value="Domiciliario">Domiciliario</option>
+                        <option value="Cliente">Cliente</option>
                     </select>
                 </div>
-                <div class="col-6 col-md-3">
-                    <select id="filtroColor" class="form-select">
-                        <option value="">Color (todos)</option>
-                    </select>
-                </div>
-                <div class="col-6 col-md-3">
+                <div class="col-6 col-md-4">
                     <select id="filtroEstado" class="form-select">
                         <option value="">Estado (todos)</option>
                         <option value="Activo">Activo</option>
                         <option value="Inactivo">Inactivo</option>
                     </select>
                 </div>
-                <div class="col-6 col-md-3">
+                <div class="col-6 col-md-4">
                     <button type="button" id="btnLimpiarFiltros" class="btn btn-outline-secondary w-100">
                         <i class="bi bi-x-circle me-1"></i>Limpiar
                     </button>
@@ -67,53 +68,55 @@
         </div>
 
         <div class="ff-card-table">
-            <table class="table table-hover align-middle mb-0" id="tablaProductos">
+            <table class="table table-hover align-middle mb-0" id="tablaUsuarios">
                 <thead>
                 <tr>
-                    <th>Imagen</th>
-                    <th>Nombre</th>
-                    <th>Descripcion</th>
-                    <th>Talla</th>
-                    <th>Color</th>
-                    <th>Precio</th>
+                    <th>Usuario</th>
+                    <th>Nombre completo</th>
+                    <th>Cedula</th>
+                    <th>Genero</th>
+                    <th>Direccion</th>
+                    <th>Fecha Registro</th>
+                    <th>Correo</th>
+                    <th>Telefono</th>
+                    <th>Cargo</th>
                     <th>Estado</th>
                     <th class="text-end">Acciones</th>
                 </tr>
                 </thead>
                 <tbody>
-                <tr th:if="${#lists.isEmpty(productos)}">
-                    <td colspan="8" class="text-center text-muted py-4">No hay productos registrados.</td>
+                <tr th:if="${#lists.isEmpty(usuarios)}">
+                    <td colspan="11" class="text-center text-muted py-4">No hay usuarios registrados.</td>
                 </tr>
-                <tr th:each="p : ${productos}"
-                    th:attr="data-search=${#strings.toLowerCase(p.nombreProducto + ' ' + (p.descripcion != null ? p.descripcion : '') + ' ' + p.talla + ' ' + p.color + ' ' + p.precio + ' ' + p.estado)},
-                             data-talla=${p.talla},
-                             data-color=${p.color},
-                             data-estado=${p.estado}">
+                <tr th:each="u : ${usuarios}"
+                    th:attr="data-search=${#strings.toLowerCase(u.nombreUsuario + ' ' + u.nombres + ' ' + u.apellidos + ' ' + u.cc + ' ' + u.correo + ' ' + u.telefono + ' ' + u.cargo + ' ' + u.estado + ' ' + (u.genero != null ? u.genero : '') + ' ' + (u.direccion != null ? u.direccion : ''))},
+                             data-cargo=${u.cargo},
+                             data-estado=${u.estado}">
+                    <td th:text="${u.nombreUsuario}" class="fw-semibold"></td>
+                    <td th:text="${u.nombreCompleto}"></td>
+                    <td th:text="${u.cc}"></td>
+                    <td th:text="${u.genero}"></td>
+                    <td th:text="${u.direccion}"></td>
+                    <td th:text="${#temporals.format(u.fechaRegistro, 'dd/MM/yyyy')}"></td>
+                    <td th:text="${u.correo}"></td>
+                    <td th:text="${u.telefono}"></td>
                     <td>
-                        <img th:if="${p.imagenBase64 != null}"
-                             th:src="'data:image/jpeg;base64,' + ${p.imagenBase64}"
-                             style="width:44px;height:44px;object-fit:cover;border-radius:8px" />
-                        <span th:unless="${p.imagenBase64 != null}" class="text-muted">-</span>
+                        <span class="badge-stock badge-stock-sobre" th:text="${u.cargo}"></span>
                     </td>
-                    <td th:text="${p.nombreProducto}" class="fw-semibold"></td>
-                    <td th:text="${p.descripcion}"></td>
-                    <td th:text="${p.talla}"></td>
-                    <td th:text="${p.color}"></td>
-                    <td th:text="'$' + ${p.precio}"></td>
                     <td>
-                        <span class="badge-stock" th:classappend="${p.estado == 'Activo'} ? 'badge-stock-normal' : 'badge-stock-bajo'"
-                              th:text="${p.estado}"></span>
+                        <span class="badge-stock" th:classappend="${u.estado == 'Activo'} ? 'badge-stock-normal' : 'badge-stock-bajo'"
+                              th:text="${u.estado}"></span>
                     </td>
                     <td class="text-end">
-                        <a th:href="@{'/productos/editar/' + ${p.idProducto}}" class="btn-ff-icon editar" title="Actualizar">
+                        <a th:href="@{'/usuarios/editar/' + ${u.idUsuario}}" class="btn-ff-icon editar" title="Actualizar">
                             <i class="bi bi-pencil-fill"></i>
                         </a>
-                        <form th:if="${p.estado == 'Activo'}" th:action="@{'/productos/eliminar/' + ${p.idProducto}}" method="post" class="d-inline">
-                            <button type="submit" class="btn-ff-icon eliminar" title="Eliminar">
+                        <form th:if="${u.estado == 'Activo'}" th:action="@{'/usuarios/eliminar/' + ${u.idUsuario}}" method="post" class="d-inline">
+                            <button type="submit" class="btn-ff-icon eliminar" title="Desactivar">
                                 <i class="bi bi-trash-fill"></i>
                             </button>
                         </form>
-                        <form th:if="${p.estado != 'Activo'}" th:action="@{'/productos/reactivar/' + ${p.idProducto}}" method="post" class="d-inline">
+                        <form th:if="${u.estado != 'Activo'}" th:action="@{'/usuarios/reactivar/' + ${u.idUsuario}}" method="post" class="d-inline">
                             <button type="submit" class="btn-ff-icon reactivar" title="Reactivar">
                                 <i class="bi bi-arrow-clockwise"></i>
                             </button>
@@ -121,7 +124,7 @@
                     </td>
                 </tr>
                 <tr id="filaSinResultados" class="ff-filtros-vacio">
-                    <td colspan="8" class="text-center text-muted py-4">Ningun producto coincide con la busqueda.</td>
+                    <td colspan="11" class="text-center text-muted py-4">Ningun usuario coincide con la busqueda.</td>
                 </tr>
                 </tbody>
             </table>
@@ -130,8 +133,19 @@
 </div>
 
 <script th:inline="none">
+    // Mostrar toast de éxito por 4 segundos
     (function () {
-        const tabla = document.getElementById('tablaProductos');
+        const toastElement = document.getElementById('toastExito');
+        if (toastElement) {
+            toastElement.style.display = 'block';
+            setTimeout(function () {
+                toastElement.style.display = 'none';
+            }, 4000);
+        }
+    })();
+    
+    (function () {
+        const tabla = document.getElementById('tablaUsuarios');
         if (!tabla) return;
 
         const filas = Array.from(tabla.querySelectorAll('tbody tr'))
@@ -139,8 +153,7 @@
         const filaSinResultados = document.getElementById('filaSinResultados');
 
         const inputTexto = document.getElementById('filtroTexto');
-        const selectTalla = document.getElementById('filtroTalla');
-        const selectColor = document.getElementById('filtroColor');
+        const selectCargo = document.getElementById('filtroCargo');
         const selectEstado = document.getElementById('filtroEstado');
         const btnLimpiar = document.getElementById('btnLimpiarFiltros');
         const btnToggleFiltros = document.getElementById('btnToggleFiltros');
@@ -153,32 +166,17 @@
             btnToggleFiltros.classList.toggle('active', abierto);
         });
 
-        function llenarOpciones(select, atributo) {
-            const valores = new Set(filas.map(f => f.getAttribute(atributo)).filter(Boolean));
-            Array.from(valores).sort().forEach(valor => {
-                const opcion = document.createElement('option');
-                opcion.value = valor;
-                opcion.textContent = valor;
-                select.appendChild(opcion);
-            });
-        }
-
-        llenarOpciones(selectTalla, 'data-talla');
-        llenarOpciones(selectColor, 'data-color');
-
         function aplicarFiltros() {
             const texto = inputTexto.value.trim().toLowerCase();
-            const talla = selectTalla.value;
-            const color = selectColor.value;
+            const cargo = selectCargo.value;
             const estado = selectEstado.value;
             let visibles = 0;
 
             filas.forEach(fila => {
                 const coincideTexto = !texto || fila.getAttribute('data-search').includes(texto);
-                const coincideTalla = !talla || fila.getAttribute('data-talla') === talla;
-                const coincideColor = !color || fila.getAttribute('data-color') === color;
+                const coincideCargo = !cargo || fila.getAttribute('data-cargo') === cargo;
                 const coincideEstado = !estado || fila.getAttribute('data-estado') === estado;
-                const mostrar = coincideTexto && coincideTalla && coincideColor && coincideEstado;
+                const mostrar = coincideTexto && coincideCargo && coincideEstado;
 
                 fila.classList.toggle('d-none', !mostrar);
                 if (mostrar) visibles++;
@@ -187,29 +185,17 @@
             filaSinResultados.classList.toggle('ff-filtros-vacio', visibles !== 0);
         }
 
-        [inputTexto, selectTalla, selectColor, selectEstado].forEach(el => {
+        [inputTexto, selectCargo, selectEstado].forEach(el => {
             el.addEventListener('input', aplicarFiltros);
             el.addEventListener('change', aplicarFiltros);
         });
 
         btnLimpiar.addEventListener('click', () => {
             inputTexto.value = '';
-            selectTalla.value = '';
-            selectColor.value = '';
+            selectCargo.value = '';
             selectEstado.value = '';
             aplicarFiltros();
         });
-    })();
-
-    // Mostrar toast de éxito por 4 segundos
-    (function () {
-        const toastElement = document.getElementById('toastExito');
-        if (toastElement) {
-            toastElement.style.display = 'block';
-            setTimeout(function () {
-                toastElement.style.display = 'none';
-            }, 4000);
-        }
     })();
 </script>
 

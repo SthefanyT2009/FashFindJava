@@ -23,7 +23,7 @@ public class ProductoService {
     }
 
     public List<Producto> listarProductos() {
-        return productoRepository.findAll(Sort.by(Sort.Direction.DESC, "idProducto"));
+        return productoRepository.findAll(Sort.by(Sort.Direction.ASC, "nombreProducto"));
     }
 
     public Producto obtenerPorId(Integer id) {

@@ -2,76 +2,283 @@
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title th:text="${esNuevo} ? 'Nuevo Producto - FashFind' : 'Editar Producto - FashFind'"></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
     <link href="/css/fashfind.css" rel="stylesheet">
 </head>
-<body class="bg-light">
+<body class="ff-login-bg py-5">
 
-<div class="container py-5" style="max-width: 560px;">
-    <div class="card shadow-sm border-0 p-4" style="border-radius: 16px;">
-        <h4 class="fw-bold mb-4">
-            <i class="bi bi-bag-plus me-2 text-ff"></i>
-            <span th:text="${esNuevo} ? 'Nuevo Producto' : 'Editar Producto'"></span>
-        </h4>
+    <div class="container">
+        <a th:href="@{/productos}" class="btn btn-sm mb-3 ff-btn-back">
+            <i class="bi bi-arrow-left"></i> Volver a Gestion de Productos
+        </a>
+        <div class="row justify-content-center">
+            <div class="col-lg-6 col-md-8">
+                <div class="card shadow border-0 rounded-3 ff-card-login">
+                    <div class="card-body p-4 p-md-5">
 
-        <form th:object="${producto}"
-              th:action="${esNuevo} ? @{/productos} : @{'/productos/actualizar/' + ${producto.idProducto}}"
-              method="post" enctype="multipart/form-data">
+                        <div class="text-center mb-4">
+                            <i class="bi bi-bag-plus fs-1 text-ff"></i>
+                            <h3 class="fw-bold mt-2" style="color:#1a1a2e;" th:text="${esNuevo} ? 'Nuevo Producto' : 'Editar Producto'"></h3>
+                            <p class="text-muted small mb-0" th:text="${esNuevo} ? 'Registra una prenda nueva en el catalogo' : 'Actualiza los datos de la prenda'"></p>
+                        </div>
 
-            <div class="mb-3">
-                <label class="form-label">Imagen</label>
-                <input type="file" name="imagenFile" accept="image/*" class="form-control">
-                <img th:if="${producto.imagenBase64 != null}"
-                     th:src="'data:image/jpeg;base64,' + ${producto.imagenBase64}"
-                     style="width:64px;height:64px;object-fit:cover;border-radius:10px;margin-top:8px" />
-            </div>
+                        <form th:object="${producto}"
+                              th:action="${esNuevo} ? @{/productos} : @{'/productos/actualizar/' + ${producto.idProducto}}"
+                              method="post" enctype="multipart/form-data" id="formProducto" novalidate>
 
-            <div class="mb-3">
-                <label class="form-label">Nombre Producto</label>
-                <input type="text" th:field="*{nombreProducto}" class="form-control" required maxlength="100">
-            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Imagen</label>
+                                <input type="file" name="imagenFile" accept="image/*" class="form-control">
+                                <img th:if="${producto.imagenBase64 != null}"
+                                     th:src="'data:image/jpeg;base64,' + ${producto.imagenBase64}"
+                                     style="width:64px;height:64px;object-fit:cover;border-radius:10px;margin-top:8px" />
+                            </div>
 
-            <div class="mb-3">
-                <label class="form-label">Descripcion</label>
-                <input type="text" th:field="*{descripcion}" class="form-control" maxlength="200">
-            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Nombre Producto</label>
+                                <input type="text" th:field="*{nombreProducto}" id="nombreProducto" class="form-control"
+                                       required minlength="3" maxlength="100" autocomplete="off">
+                                <div class="invalid-feedback">Solo letras y espacios, entre 3 y 100 caracteres.</div>
+                            </div>
 
-            <div class="row">
-                <div class="col mb-3">
-                    <label class="form-label">Talla</label>
-                    <input type="text" th:field="*{talla}" class="form-control" required maxlength="100">
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Descripcion <span class="text-muted fw-normal">(opcional)</span></label>
+                                <input type="text" th:field="*{descripcion}" id="descripcion" class="form-control"
+                                       minlength="5" maxlength="200">
+                                <div class="invalid-feedback">Si la completas, debe tener entre 5 y 200 caracteres.</div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col mb-3">
+                                    <label class="form-label fw-semibold">Talla</label>
+                                    <input type="text" th:field="*{talla}" id="talla" class="form-control"
+                                           required minlength="1" maxlength="20">
+                                    <div class="invalid-feedback">Entre 1 y 20 caracteres.</div>
+                                </div>
+                                <div class="col mb-3">
+                                    <label class="form-label fw-semibold">Color</label>
+                                    <input type="text" th:field="*{color}" id="color" class="form-control"
+                                           required minlength="3" maxlength="50">
+                                    <div class="invalid-feedback">Solo letras y espacios, entre 3 y 50 caracteres.</div>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Precio</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-white">$</span>
+                                    <input type="number" th:field="*{precio}" id="precio" class="form-control"
+                                           required min="100" max="50000000" step="1" inputmode="numeric">
+                                </div>
+                                <div class="text-danger small mt-1" id="feedbackPrecio" style="display:none;">
+                                    Solo numeros, entre $100 y $50.000.000.
+                                </div>
+                            </div>
+
+                            <div th:if="${esNuevo}">
+                                <div class="row">
+                                    <div class="col mb-3">
+                                        <label class="form-label fw-semibold">Stock Inicial</label>
+                                        <input type="number" name="stockInicial" id="stockInicial" class="form-control"
+                                               value="0" required min="0" max="100000" inputmode="numeric">
+                                    </div>
+                                    <div class="col mb-3">
+                                        <label class="form-label fw-semibold">Stock Minimo</label>
+                                        <input type="number" name="stockMinimo" id="stockMinimo" class="form-control"
+                                               value="0" required min="0" max="100000" inputmode="numeric">
+                                    </div>
+                                </div>
+                                <div class="alert alert-danger py-2 d-none" id="alertaStockCruzado">
+                                    <i class="bi bi-exclamation-circle me-1"></i>
+                                    El stock inicial no puede ser menor al stock minimo.
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn btn-ff w-100 fw-semibold py-2 mt-2"
+                                    th:text="${esNuevo} ? 'Registrar Producto' : 'Actualizar Producto'"></button>
+                        </form>
+                    </div>
                 </div>
-                <div class="col mb-3">
-                    <label class="form-label">Color</label>
-                    <input type="text" th:field="*{color}" class="form-control" required maxlength="100">
-                </div>
             </div>
-
-            <div class="mb-3">
-                <label class="form-label">Precio</label>
-                <input type="number" th:field="*{precio}" class="form-control" required min="0">
-            </div>
-
-            <div th:if="${esNuevo}" class="row">
-                <div class="col mb-3">
-                    <label class="form-label">Stock Inicial</label>
-                    <input type="number" name="stockInicial" class="form-control" value="0" min="0">
-                </div>
-                <div class="col mb-3">
-                    <label class="form-label">Stock Minimo</label>
-                    <input type="number" name="stockMinimo" class="form-control" value="0" min="0">
-                </div>
-            </div>
-
-            <button type="submit" class="btn btn-ff w-100 mb-2" th:text="${esNuevo} ? 'Registrar Producto' : 'Actualizar Producto'"></button>
-            <a th:href="@{/productos}" class="btn btn-outline-secondary w-100">
-                <i class="bi bi-arrow-left me-1"></i>Regresar
-            </a>
-        </form>
+        </div>
     </div>
-</div>
+
+    <script th:inline="javascript">
+    document.addEventListener('DOMContentLoaded', function () {
+
+        var form = document.getElementById('formProducto');
+
+        // ---------- Helpers ----------
+        function marcarInvalido(input) {
+            input.classList.remove('is-valid');
+            input.classList.add('is-invalid');
+        }
+        function marcarValido(input) {
+            input.classList.remove('is-invalid');
+            input.classList.add('is-valid');
+        }
+        function limpiarEstado(input) {
+            input.classList.remove('is-invalid', 'is-valid');
+        }
+
+        // Filtra en vivo: borra del input cualquier caracter que no matchee "permitidos"
+        // y marca error momentaneo si se intento escribir algo no permitido.
+        function filtrarEnVivo(input, regexNoPermitido) {
+            if (!input) return;
+            input.addEventListener('input', function () {
+                var original = input.value;
+                var filtrado = original.replace(regexNoPermitido, '');
+                if (filtrado !== original) {
+                    input.value = filtrado;
+                    marcarInvalido(input);
+                } else if (input.value.length > 0) {
+                    limpiarEstado(input);
+                }
+            });
+        }
+
+        // ---------- Campos ----------
+        var campoNombre = document.getElementById('nombreProducto');
+        var campoDescripcion = document.getElementById('descripcion');
+        var campoTalla = document.getElementById('talla');
+        var campoColor = document.getElementById('color');
+        var campoPrecio = document.getElementById('precio');
+        var campoStockInicial = document.getElementById('stockInicial');
+        var campoStockMinimo = document.getElementById('stockMinimo');
+        var feedbackPrecio = document.getElementById('feedbackPrecio');
+        var alertaStockCruzado = document.getElementById('alertaStockCruzado');
+
+        var PRECIO_MIN = 100;
+        var PRECIO_MAX = 50000000;
+        var STOCK_MAX = 100000;
+
+        // ---------- Filtros por campo (bloquean caracteres no permitidos al escribir) ----------
+        var regexLetras = /[^A-Za-zÁÉÍÓÚÑÜáéíóúñü\s]/g;
+        var regexNumeros = /[^0-9]/g;
+
+        filtrarEnVivo(campoNombre, regexLetras);
+        filtrarEnVivo(campoColor, regexLetras);
+        filtrarEnVivo(campoPrecio, regexNumeros);
+        filtrarEnVivo(campoStockInicial, regexNumeros);
+        filtrarEnVivo(campoStockMinimo, regexNumeros);
+
+        // ---------- Validaciones completas por campo (se corren en blur y en submit) ----------
+        var validadores = {
+            nombreProducto: function () {
+                var ok = /^[A-Za-zÁÉÍÓÚÑÜáéíóúñü\s]{3,100}$/.test(campoNombre.value.trim());
+                ok ? marcarValido(campoNombre) : marcarInvalido(campoNombre);
+                return ok;
+            },
+            descripcion: function () {
+                var valor = campoDescripcion.value.trim();
+                if (valor.length === 0) {
+                    limpiarEstado(campoDescripcion);
+                    return true;
+                }
+                var ok = valor.length >= 5 && valor.length <= 200;
+                ok ? marcarValido(campoDescripcion) : marcarInvalido(campoDescripcion);
+                return ok;
+            },
+            talla: function () {
+                var len = campoTalla.value.trim().length;
+                var ok = len >= 1 && len <= 20;
+                ok ? marcarValido(campoTalla) : marcarInvalido(campoTalla);
+                return ok;
+            },
+            color: function () {
+                var ok = /^[A-Za-zÁÉÍÓÚÑÜáéíóúñü\s]{3,50}$/.test(campoColor.value.trim());
+                ok ? marcarValido(campoColor) : marcarInvalido(campoColor);
+                return ok;
+            },
+            precio: function () {
+                var valor = campoPrecio.value.trim();
+                var esNumerico = /^[0-9]+$/.test(valor);
+                var num = Number(valor);
+                var ok = esNumerico && num >= PRECIO_MIN && num <= PRECIO_MAX;
+                if (ok) {
+                    marcarValido(campoPrecio);
+                    feedbackPrecio.style.display = 'none';
+                } else {
+                    marcarInvalido(campoPrecio);
+                    feedbackPrecio.style.display = 'block';
+                }
+                return ok;
+            }
+        };
+
+        if (campoStockInicial && campoStockMinimo) {
+            validadores.stockInicial = function () {
+                var valor = campoStockInicial.value.trim();
+                var ok = /^[0-9]+$/.test(valor) && Number(valor) <= STOCK_MAX;
+                ok ? marcarValido(campoStockInicial) : marcarInvalido(campoStockInicial);
+                return ok;
+            };
+            validadores.stockMinimo = function () {
+                var valor = campoStockMinimo.value.trim();
+                var ok = /^[0-9]+$/.test(valor) && Number(valor) <= STOCK_MAX;
+                ok ? marcarValido(campoStockMinimo) : marcarInvalido(campoStockMinimo);
+                return ok;
+            };
+        }
+
+        // El stock inicial nunca puede ser menor al stock minimo
+        function validarStockCruzado() {
+            if (!campoStockInicial || !campoStockMinimo) return true;
+            var inicial = Number(campoStockInicial.value.trim());
+            var minimo = Number(campoStockMinimo.value.trim());
+            var ok = !isNaN(inicial) && !isNaN(minimo) && inicial >= minimo;
+            if (ok) {
+                alertaStockCruzado.classList.add('d-none');
+            } else {
+                alertaStockCruzado.classList.remove('d-none');
+                marcarInvalido(campoStockInicial);
+            }
+            return ok;
+        }
+
+        // Corre validacion completa cuando el usuario sale del campo (blur)
+        Object.keys(validadores).forEach(function (nombreCampo) {
+            var el = document.getElementById(nombreCampo);
+            if (el) el.addEventListener('blur', validadores[nombreCampo]);
+        });
+
+        if (campoStockInicial) campoStockInicial.addEventListener('blur', validarStockCruzado);
+        if (campoStockMinimo) campoStockMinimo.addEventListener('blur', validarStockCruzado);
+
+        // ---------- Validacion al enviar ----------
+        form.addEventListener('submit', function (e) {
+            var todoValido = true;
+            var primerInvalido = null;
+
+            Object.keys(validadores).forEach(function (nombreCampo) {
+                var el = document.getElementById(nombreCampo);
+                if (!el) return;
+                var ok = validadores[nombreCampo]();
+                if (!ok) {
+                    todoValido = false;
+                    if (!primerInvalido) primerInvalido = el;
+                }
+            });
+
+            if (campoStockInicial && campoStockMinimo) {
+                var okCruzado = validarStockCruzado();
+                if (!okCruzado) {
+                    todoValido = false;
+                    if (!primerInvalido) primerInvalido = campoStockInicial;
+                }
+            }
+
+            if (!todoValido) {
+                e.preventDefault();
+                primerInvalido.focus();
+                primerInvalido.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        });
+    });
+    </script>
 
 </body>
 </html>

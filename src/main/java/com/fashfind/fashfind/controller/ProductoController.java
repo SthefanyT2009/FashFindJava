@@ -29,9 +29,12 @@ public class ProductoController {
     }
 
     @GetMapping("/productos")
-    public String listar(Model model, Authentication authentication) {
+    public String listar(@RequestParam(required = false) String exito, Model model, Authentication authentication) {
         agregarUsuarioAlModelo(model, authentication);
         model.addAttribute("productos", productoService.listarProductos());
+        if (exito != null) {
+            model.addAttribute("exito", exito);
+        }
         return "productos";
     }
 
@@ -60,7 +63,8 @@ public class ProductoController {
             producto.setImagen(imagenFile.getBytes());
         }
         productoService.crearProducto(producto, stockInicial, stockMinimo);
-        return "redirect:/productos";
+        return "redirect:/productos?exito=" + java.net.URLEncoder.encode("Producto creado con exito.",
+                java.nio.charset.StandardCharsets.UTF_8);
     }
 
     @PostMapping("/productos/actualizar/{id}")
@@ -71,19 +75,22 @@ public class ProductoController {
             producto.setImagen(imagenFile.getBytes());
         }
         productoService.actualizarProducto(id, producto);
-        return "redirect:/productos";
+        return "redirect:/productos?exito=" + java.net.URLEncoder.encode("Producto actualizado con exito.",
+                java.nio.charset.StandardCharsets.UTF_8);
     }
 
     @PostMapping("/productos/eliminar/{id}")
     public String eliminar(@PathVariable Integer id) {
         productoService.eliminarProducto(id);
-        return "redirect:/productos";
+        return "redirect:/productos?exito=" + java.net.URLEncoder.encode("Producto desactivado con exito.",
+                java.nio.charset.StandardCharsets.UTF_8);
     }
 
     @PostMapping("/productos/reactivar/{id}")
     public String reactivar(@PathVariable Integer id) {
         productoService.reactivarProducto(id);
-        return "redirect:/productos";
+        return "redirect:/productos?exito=" + java.net.URLEncoder.encode("Producto reactivado con exito.",
+                java.nio.charset.StandardCharsets.UTF_8);
     }
 
     private void agregarUsuarioAlModelo(Model model, Authentication authentication) {

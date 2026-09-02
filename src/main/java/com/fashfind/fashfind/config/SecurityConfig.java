@@ -49,7 +49,8 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 // Recursos publicos: estilos, imagenes, login, registro y pagina de inicio
                 .requestMatchers("/css/**", "/js/**", "/images/**", "/webjars/**",
-                                  "/login", "/registro", "/error", "/", "/inicio").permitAll()
+                                  "/login", "/registro", "/error", "/", "/inicio",
+                                  "/api/usuarios/existe-usuario").permitAll()
 
                 // Perfil propio: cualquier usuario autenticado
                 .requestMatchers("/perfil/**").authenticated()
@@ -61,7 +62,7 @@ public class SecurityConfig {
                 .requestMatchers("/carrito/**", "/pedidos/**").hasAnyRole("CLIENTE", "ADMINISTRADOR")
 
                 // Gestion de ventas e inventario
-                .requestMatchers("/vendedor-dashboard/**", "/inventario/**", "/productos/**").hasAnyRole("ADMINISTRADOR", "VENDEDOR")
+                .requestMatchers("/vendedor-dashboard/**", "/inventario/**", "/productos/**", "/ventas/**").hasAnyRole("ADMINISTRADOR", "VENDEDOR")
 
                 // Entregas asignadas al domiciliario
                 .requestMatchers("/domiciliario-dashboard/**").hasAnyRole("DOMICILIARIO", "ADMINISTRADOR")
