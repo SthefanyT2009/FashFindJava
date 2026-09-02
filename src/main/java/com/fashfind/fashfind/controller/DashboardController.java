@@ -72,7 +72,11 @@ public class DashboardController {
     public String adminDashboard(Model model, Authentication authentication) {
         agregarUsuarioAlModelo(model, authentication);
         agregarEstadisticasAlModelo(model);
+<<<<<<< HEAD
         return "interfaces/admin-dashboard";
+=======
+        return "admin-dashboard";
+>>>>>>> 4903f414195c0ab27cab724f1199e2c7f151c88a
     }
 
     private Usuario agregarUsuarioAlModelo(Model model, Authentication authentication) {
@@ -111,6 +115,58 @@ public class DashboardController {
         model.addAttribute("ventasQuincenales", ventasQuincenales);
 
         // --- Serie diaria para la grafica "Ventas - Ultimos 15 dias" (solo de el) ---
+        Map<LocalDate, Long> totalPorDia = new LinkedHashMap<>();
+        for (int i = 0; i < DIAS_QUINCENA; i++) {
+            totalPorDia.put(desde.plusDays(i), 0L);
+        }
+        for (Venta venta : ventasQuincena) {
+            totalPorDia.merge(venta.getFechaVenta(),
+                    venta.getCostoTotal() != null ? venta.getCostoTotal().longValue() : 0L, Long::sum);
+        }
+
+        DateTimeFormatter formato = DateTimeFormatter.ofPattern("dd/MM");
+        List<String> etiquetas = new ArrayList<>();
+        List<Long> valores = new ArrayList<>();
+        for (Map.Entry<LocalDate, Long> entrada : totalPorDia.entrySet()) {
+            etiquetas.add(entrada.getKey().format(formato));
+            valores.add(entrada.getValue());
+        }
+        model.addAttribute("ventasEtiquetas", etiquetas);
+        model.addAttribute("ventasValores", valores);
+    }
+
+    /**
+     * Calcula, con datos reales de la base de datos, todas las cifras que
+     * muestra la pagina principal del administrador. Cada conteo respeta el
+     * campo "estado" de cada entidad: lo que un usuario, cliente, producto o
+     * venta desactiva deja de sumar en su tarjeta de "activos" y pasa a la
+     * de "inactivos" correspondiente, en vez de seguir contando como si
+     * siguiera activo.
+     */
+    private void agregarEstadisticasAlModelo(Model model) {
+        // --- Usuarios internos (Administrador / Vendedor / Domiciliario) ---
+        model.addAttribute("usuariosActivos", usuarioRepository.countByCargoNotAndEstado(Cargo.Cliente, "Activo"));
+        model.addAttribute("usuariosInactivos", usuarioRepository.countByCargoNotAndEstado(Cargo.Cliente, "Inactivo"));
+
+        // --- Clientes (cargo = Cliente) ---
+        model.addAttribute("clientesRegistrados", usuarioRepository.countByCargoAndEstado(Cargo.Cliente, "Activo"));
+        model.addAttribute("clientesInactivos", usuarioRepository.countByCargoAndEstado(Cargo.Cliente, "Inactivo"));
+
+        // --- Productos ---
+        model.addAttribute("productosActivos", productoRepository.countByEstado("Activo"));
+        model.addAttribute("productosInactivos", productoRepository.countByEstado("Inactivo"));
+
+        // --- Ventas quincenales (ultimos 15 dias, solo ventas activas) ---
+        LocalDate hoy = LocalDate.now();
+        LocalDate desde = hoy.minusDays(DIAS_QUINCENA - 1L);
+        List<Venta> ventasQuincena = ventaRepository.findByEstadoAndFechaVentaGreaterThanEqual("Activo", desde);
+
+        long ventasQuincenales = ventasQuincena.stream()
+                .mapToLong(v -> v.getCostoTotal() != null ? v.getCostoTotal() : 0)
+                .sum();
+        model.addAttribute("ventasQuincenales", ventasQuincenales);
+
+        // --- Serie diaria para la grafica "Ventas - Ultimos 15 dias" ---
         Map<LocalDate, Long> totalPorDia = new LinkedHashMap<>();
         for (int i = 0; i < DIAS_QUINCENA; i++) {
             totalPorDia.put(desde.plusDays(i), 0L);

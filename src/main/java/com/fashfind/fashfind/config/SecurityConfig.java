@@ -61,6 +61,7 @@ public class SecurityConfig {
                 // Carrito y pedidos: Cliente
                 .requestMatchers("/carrito/**", "/pedidos/**").hasAnyRole("CLIENTE", "ADMINISTRADOR")
 
+<<<<<<< HEAD
                 // --- Ventas: el Vendedor solo puede registrar (crear) y consultar (listar/ver detalle) ---
                 // Editar, eliminar/inactivar, reactivar y los reportes de ventas son exclusivos del Administrador.
                 .requestMatchers("/ventas/editar/**", "/ventas/actualizar/**", "/ventas/eliminar/**",
@@ -74,6 +75,10 @@ public class SecurityConfig {
 
                 // Resto de rutas de ventas (listar, ver detalle, registrar) e inventario (listar) + panel del vendedor
                 .requestMatchers("/vendedor-dashboard/**", "/inventario/**", "/ventas/**").hasAnyRole("ADMINISTRADOR", "VENDEDOR")
+=======
+                // Gestion de ventas e inventario
+                .requestMatchers("/vendedor-dashboard/**", "/inventario/**", "/productos/**", "/ventas/**").hasAnyRole("ADMINISTRADOR", "VENDEDOR")
+>>>>>>> 4903f414195c0ab27cab724f1199e2c7f151c88a
 
                 // Entregas asignadas al domiciliario
                 .requestMatchers("/domiciliario-dashboard/**").hasAnyRole("DOMICILIARIO", "ADMINISTRADOR")

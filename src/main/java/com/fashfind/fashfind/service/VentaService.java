@@ -52,6 +52,7 @@ public class VentaService {
         return ventaRepository.findAllConUsuario();
     }
 
+<<<<<<< HEAD
     /**
      * Lista solo las ventas registradas por un usuario especifico (usada
      * para que el Vendedor solo vea sus propias ventas en la tabla de
@@ -61,6 +62,8 @@ public class VentaService {
         return ventaRepository.findByUsuarioIdConUsuario(idUsuario);
     }
 
+=======
+>>>>>>> 4903f414195c0ab27cab724f1199e2c7f151c88a
     public Venta obtenerPorId(Integer id) {
         return ventaRepository.findByIdConDetalles(id)
                 .orElseThrow(() -> new IllegalArgumentException("Venta no encontrada: " + id));

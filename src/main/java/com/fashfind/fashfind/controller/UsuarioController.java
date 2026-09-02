@@ -69,7 +69,11 @@ public class UsuarioController {
         if (exito != null) {
             model.addAttribute("exito", exito);
         }
+<<<<<<< HEAD
         return "usuarios/usuarios";
+=======
+        return "usuarios";
+>>>>>>> 4903f414195c0ab27cab724f1199e2c7f151c88a
     }
 
     @GetMapping("/usuarios/nuevo")
@@ -80,7 +84,11 @@ public class UsuarioController {
         if (error != null) {
             model.addAttribute("error", error);
         }
+<<<<<<< HEAD
         return "usuarios/usuario-form";
+=======
+        return "usuario-form";
+>>>>>>> 4903f414195c0ab27cab724f1199e2c7f151c88a
     }
 
     @GetMapping("/usuarios/editar/{id}")
@@ -92,7 +100,11 @@ public class UsuarioController {
         if (error != null) {
             model.addAttribute("error", error);
         }
+<<<<<<< HEAD
         return "usuarios/usuario-form";
+=======
+        return "usuario-form";
+>>>>>>> 4903f414195c0ab27cab724f1199e2c7f151c88a
     }
 
     @PostMapping("/usuarios")
@@ -128,7 +140,11 @@ public class UsuarioController {
         } catch (RuntimeException e) {
             return "redirect:/usuarios?error=" + encodar(e.getMessage());
         }
+<<<<<<< HEAD
         return "redirect:/usuarios?exito=" + encodar("Usuario desactivado con exito.");
+=======
+        return "redirect:/usuarios";
+>>>>>>> 4903f414195c0ab27cab724f1199e2c7f151c88a
     }
 
     @PostMapping("/usuarios/reactivar/{id}")
@@ -138,7 +154,11 @@ public class UsuarioController {
         } catch (RuntimeException e) {
             return "redirect:/usuarios?error=" + encodar(e.getMessage());
         }
+<<<<<<< HEAD
         return "redirect:/usuarios?exito=" + encodar("Usuario reactivado con exito.");
+=======
+        return "redirect:/usuarios";
+>>>>>>> 4903f414195c0ab27cab724f1199e2c7f151c88a
     }
 
     private Usuario usuarioActual(Authentication authentication) {

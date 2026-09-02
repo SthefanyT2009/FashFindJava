@@ -14,7 +14,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+<<<<<<< HEAD
 import com.fashfind.fashfind.entity.Cargo;
+=======
+>>>>>>> 4903f414195c0ab27cab724f1199e2c7f151c88a
 import com.fashfind.fashfind.entity.MetodoPagoVenta;
 import com.fashfind.fashfind.entity.Usuario;
 import com.fashfind.fashfind.entity.Venta;
@@ -39,6 +42,7 @@ public class VentaController {
     @GetMapping("/ventas")
     public String listar(@RequestParam(required = false) String error, @RequestParam(required = false) String exito,
                           Model model, Authentication authentication) {
+<<<<<<< HEAD
         Usuario usuarioActual = agregarUsuarioAlModelo(model, authentication);
 
         // El Administrador ve todas las ventas; el Vendedor solo las que el mismo registro.
@@ -47,17 +51,26 @@ public class VentaController {
                 : ventaService.listarVentas();
         model.addAttribute("ventas", ventas);
 
+=======
+        agregarUsuarioAlModelo(model, authentication);
+        model.addAttribute("ventas", ventaService.listarVentas());
+>>>>>>> 4903f414195c0ab27cab724f1199e2c7f151c88a
         if (error != null) {
             model.addAttribute("error", error);
         }
         if (exito != null) {
             model.addAttribute("exito", exito);
         }
+<<<<<<< HEAD
         return "ventas/ventas";
+=======
+        return "ventas";
+>>>>>>> 4903f414195c0ab27cab724f1199e2c7f151c88a
     }
 
     @GetMapping("/ventas/{id}")
     public String verDetalle(@PathVariable Integer id, Model model, Authentication authentication) {
+<<<<<<< HEAD
         Usuario usuarioActual = agregarUsuarioAlModelo(model, authentication);
         Venta venta = ventaService.obtenerPorId(id);
 
@@ -72,6 +85,11 @@ public class VentaController {
 
         model.addAttribute("venta", venta);
         return "ventas/venta-detalle";
+=======
+        agregarUsuarioAlModelo(model, authentication);
+        model.addAttribute("venta", ventaService.obtenerPorId(id));
+        return "venta-detalle";
+>>>>>>> 4903f414195c0ab27cab724f1199e2c7f151c88a
     }
 
     @GetMapping("/ventas/nueva")
@@ -84,7 +102,11 @@ public class VentaController {
         if (error != null) {
             model.addAttribute("error", error);
         }
+<<<<<<< HEAD
         return "ventas/venta-form";
+=======
+        return "venta-form";
+>>>>>>> 4903f414195c0ab27cab724f1199e2c7f151c88a
     }
 
     @GetMapping("/ventas/editar/{id}")
@@ -105,7 +127,11 @@ public class VentaController {
         if (error != null) {
             model.addAttribute("error", error);
         }
+<<<<<<< HEAD
         return "ventas/venta-form";
+=======
+        return "venta-form";
+>>>>>>> 4903f414195c0ab27cab724f1199e2c7f151c88a
     }
 
     @PostMapping("/ventas")
@@ -145,7 +171,11 @@ public class VentaController {
         } catch (RuntimeException e) {
             return "redirect:/ventas?error=" + encodar(e.getMessage());
         }
+<<<<<<< HEAD
         return "redirect:/ventas?exito=" + encodar("Venta desactivada con exito.");
+=======
+        return "redirect:/ventas";
+>>>>>>> 4903f414195c0ab27cab724f1199e2c7f151c88a
     }
 
     @PostMapping("/ventas/reactivar/{id}")
@@ -155,7 +185,11 @@ public class VentaController {
         } catch (RuntimeException e) {
             return "redirect:/ventas?error=" + encodar(e.getMessage());
         }
+<<<<<<< HEAD
         return "redirect:/ventas?exito=" + encodar("Venta reactivada con exito.");
+=======
+        return "redirect:/ventas";
+>>>>>>> 4903f414195c0ab27cab724f1199e2c7f151c88a
     }
 
     @GetMapping("/ventas/reporte")
@@ -171,15 +205,26 @@ public class VentaController {
         model.addAttribute("ventasEfectivo", est.ventasEfectivo);
         model.addAttribute("ventasTransferencia", est.ventasTransferencia);
         model.addAttribute("ticketPromedio", est.ticketPromedio);
+<<<<<<< HEAD
         return "ventas/venta-reporte";
+=======
+        return "venta-reporte";
+>>>>>>> 4903f414195c0ab27cab724f1199e2c7f151c88a
     }
 
     @GetMapping("/ventas/reporte/pdf")
     public ResponseEntity<byte[]> reportePdf() {
+<<<<<<< HEAD
         List<Venta> ventasActivas = soloActivas(ventaService.listarVentas());
         Estadisticas est = calcularEstadisticas(ventasActivas);
 
         byte[] pdf = reporteVentaService.generarPdf(ventasActivas, est.totalVentas, est.unidadesVendidas,
+=======
+        List<Venta> ventas = ventaService.listarVentas();
+        Estadisticas est = calcularEstadisticas(ventas);
+
+        byte[] pdf = reporteVentaService.generarPdf(ventas, est.totalVentas, est.unidadesVendidas,
+>>>>>>> 4903f414195c0ab27cab724f1199e2c7f151c88a
                 est.ingresosTotales, est.ventasEfectivo, est.ventasTransferencia, est.ticketPromedio);
 
         return archivoDescargable(pdf, MediaType.APPLICATION_PDF, "reporte-ventas.pdf");
@@ -187,10 +232,17 @@ public class VentaController {
 
     @GetMapping("/ventas/reporte/excel")
     public ResponseEntity<byte[]> reporteExcel() {
+<<<<<<< HEAD
         List<Venta> ventasActivas = soloActivas(ventaService.listarVentas());
         Estadisticas est = calcularEstadisticas(ventasActivas);
 
         byte[] excel = reporteVentaService.generarExcel(ventasActivas, est.totalVentas, est.unidadesVendidas,
+=======
+        List<Venta> ventas = ventaService.listarVentas();
+        Estadisticas est = calcularEstadisticas(ventas);
+
+        byte[] excel = reporteVentaService.generarExcel(ventas, est.totalVentas, est.unidadesVendidas,
+>>>>>>> 4903f414195c0ab27cab724f1199e2c7f151c88a
                 est.ingresosTotales, est.ventasEfectivo, est.ventasTransferencia, est.ticketPromedio);
 
         MediaType tipoExcel = MediaType.parseMediaType(
@@ -198,6 +250,7 @@ public class VentaController {
         return archivoDescargable(excel, tipoExcel, "reporte-ventas.xlsx");
     }
 
+<<<<<<< HEAD
     /**
      * Los reportes descargables (PDF/Excel) solo deben incluir ventas
      * activas, a diferencia de la vista en pantalla que muestra todas.
@@ -208,6 +261,8 @@ public class VentaController {
                 .toList();
     }
 
+=======
+>>>>>>> 4903f414195c0ab27cab724f1199e2c7f151c88a
     private ResponseEntity<byte[]> archivoDescargable(byte[] contenido, MediaType tipo, String nombreArchivo) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(tipo);
@@ -236,6 +291,7 @@ public class VentaController {
         return java.net.URLEncoder.encode(mensaje, StandardCharsets.UTF_8);
     }
 
+<<<<<<< HEAD
     private Usuario agregarUsuarioAlModelo(Model model, Authentication authentication) {
         if (authentication == null) {
             return null;
@@ -243,6 +299,14 @@ public class VentaController {
         Usuario usuario = usuarioRepository.findByNombreUsuario(authentication.getName()).orElse(null);
         model.addAttribute("usuarioActual", usuario);
         return usuario;
+=======
+    private void agregarUsuarioAlModelo(Model model, Authentication authentication) {
+        if (authentication == null) {
+            return;
+        }
+        Usuario usuario = usuarioRepository.findByNombreUsuario(authentication.getName()).orElse(null);
+        model.addAttribute("usuarioActual", usuario);
+>>>>>>> 4903f414195c0ab27cab724f1199e2c7f151c88a
     }
 
     private static class Estadisticas {

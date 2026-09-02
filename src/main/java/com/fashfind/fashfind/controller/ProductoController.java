@@ -35,7 +35,11 @@ public class ProductoController {
         if (exito != null) {
             model.addAttribute("exito", exito);
         }
+<<<<<<< HEAD
         return "productos/productos";
+=======
+        return "productos";
+>>>>>>> 4903f414195c0ab27cab724f1199e2c7f151c88a
     }
 
     @GetMapping("/productos/nuevo")

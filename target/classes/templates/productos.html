@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Productos - FashFind</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="/css/fashfind.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+<div th:replace="~{fragments/sidebar :: sidebar(activo='productos')}"></div>
+
+<div class="ff-content">
+    <div class="ff-topbar d-flex justify-content-between align-items-center px-4 py-3">
+        <h5 class="mb-0 fw-bold">
+            Gestion de Productos - <span th:text="${usuarioActual != null} ? ${usuarioActual.nombres} : ''"></span>
+        </h5>
+        <a th:href="@{/productos/nuevo}" class="btn btn-ff-light btn-sm">
+            <i class="bi bi-plus-lg me-1"></i>Nuevo Producto
+        </a>
+    </div>
+
+    <div class="container-fluid p-4">
+
+        <!-- Toast de éxito -->
+        <div id="toastExito" class="position-fixed bottom-0 end-0 p-3" style="z-index: 11; display:none;" th:if="${exito}">
+            <div class="toast show" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="toast-body d-flex align-items-center bg-success text-white rounded">
+                    <i class="bi bi-check-circle-fill me-2"></i>
+                    <span id="textoToast" th:text="${exito}"></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="ff-filtros">
+            <div class="d-flex gap-2">
+                <input type="text" id="filtroTexto" class="form-control" placeholder="Buscar en productos (nombre, descripcion, talla, color, precio, estado)...">
+                <button type="button" id="btnToggleFiltros" class="btn btn-outline-secondary text-nowrap" aria-expanded="false" aria-controls="panelFiltros">
+                    <i class="bi bi-funnel me-1"></i>Filtros
+                </button>
+            </div>
+            <div id="panelFiltros" class="row g-2 align-items-center mt-3 d-none">
+                <div class="col-6 col-md-3">
+                    <select id="filtroTalla" class="form-select">
+                        <option value="">Talla (todas)</option>
+                    </select>
+                </div>
+                <div class="col-6 col-md-3">
+                    <select id="filtroColor" class="form-select">
+                        <option value="">Color (todos)</option>
+                    </select>
+                </div>
+                <div class="col-6 col-md-3">
+                    <select id="filtroEstado" class="form-select">
+                        <option value="">Estado (todos)</option>
+                        <option value="Activo">Activo</option>
+                        <option value="Inactivo">Inactivo</option>
+                    </select>
+                </div>
+                <div class="col-6 col-md-3">
+                    <button type="button" id="btnLimpiarFiltros" class="btn btn-outline-secondary w-100">
+                        <i class="bi bi-x-circle me-1"></i>Limpiar
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="ff-card-table">
+            <table class="table table-hover align-middle mb-0" id="tablaProductos">
+                <thead>
+                <tr>
+                    <th>Imagen</th>
+                    <th>Nombre</th>
+                    <th>Descripcion</th>
+                    <th>Talla</th>
+                    <th>Color</th>
+                    <th>Precio</th>
+                    <th>Estado</th>
+                    <th class="text-end">Acciones</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:if="${#lists.isEmpty(productos)}">
+                    <td colspan="8" class="text-center text-muted py-4">No hay productos registrados.</td>
+                </tr>
+                <tr th:each="p : ${productos}"
+                    th:attr="data-search=${#strings.toLowerCase(p.nombreProducto + ' ' + (p.descripcion != null ? p.descripcion : '') + ' ' + p.talla + ' ' + p.color + ' ' + p.precio + ' ' + p.estado)},
+                             data-talla=${p.talla},
+                             data-color=${p.color},
+                             data-estado=${p.estado}">
+                    <td>
+                        <img th:if="${p.imagenBase64 != null}"
+                             th:src="'data:image/jpeg;base64,' + ${p.imagenBase64}"
+                             style="width:44px;height:44px;object-fit:cover;border-radius:8px" />
+                        <span th:unless="${p.imagenBase64 != null}" class="text-muted">-</span>
+                    </td>
+                    <td th:text="${p.nombreProducto}" class="fw-semibold"></td>
+                    <td th:text="${p.descripcion}"></td>
+                    <td th:text="${p.talla}"></td>
+                    <td th:text="${p.color}"></td>
+                    <td th:text="'$' + ${p.precio}"></td>
+                    <td>
+                        <span class="badge-stock" th:classappend="${p.estado == 'Activo'} ? 'badge-stock-normal' : 'badge-stock-bajo'"
+                              th:text="${p.estado}"></span>
+                    </td>
+                    <td class="text-end">
+                        <a th:href="@{'/productos/editar/' + ${p.idProducto}}" class="btn-ff-icon editar" title="Actualizar">
+                            <i class="bi bi-pencil-fill"></i>
+                        </a>
+                        <form th:if="${p.estado == 'Activo'}" th:action="@{'/productos/eliminar/' + ${p.idProducto}}" method="post" class="d-inline">
+                            <button type="submit" class="btn-ff-icon eliminar" title="Eliminar">
+                                <i class="bi bi-trash-fill"></i>
+                            </button>
+                        </form>
+                        <form th:if="${p.estado != 'Activo'}" th:action="@{'/productos/reactivar/' + ${p.idProducto}}" method="post" class="d-inline">
+                            <button type="submit" class="btn-ff-icon reactivar" title="Reactivar">
+                                <i class="bi bi-arrow-clockwise"></i>
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                <tr id="filaSinResultados" class="ff-filtros-vacio">
+                    <td colspan="8" class="text-center text-muted py-4">Ningun producto coincide con la busqueda.</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script th:inline="none">
+    (function () {
+        const tabla = document.getElementById('tablaProductos');
+        if (!tabla) return;
+
+        const filas = Array.from(tabla.querySelectorAll('tbody tr'))
+            .filter(fila => fila.hasAttribute('data-search'));
+        const filaSinResultados = document.getElementById('filaSinResultados');
+
+        const inputTexto = document.getElementById('filtroTexto');
+        const selectTalla = document.getElementById('filtroTalla');
+        const selectColor = document.getElementById('filtroColor');
+        const selectEstado = document.getElementById('filtroEstado');
+        const btnLimpiar = document.getElementById('btnLimpiarFiltros');
+        const btnToggleFiltros = document.getElementById('btnToggleFiltros');
+        const panelFiltros = document.getElementById('panelFiltros');
+
+        btnToggleFiltros.addEventListener('click', () => {
+            panelFiltros.classList.toggle('d-none');
+            const abierto = !panelFiltros.classList.contains('d-none');
+            btnToggleFiltros.setAttribute('aria-expanded', String(abierto));
+            btnToggleFiltros.classList.toggle('active', abierto);
+        });
+
+        function llenarOpciones(select, atributo) {
+            const valores = new Set(filas.map(f => f.getAttribute(atributo)).filter(Boolean));
+            Array.from(valores).sort().forEach(valor => {
+                const opcion = document.createElement('option');
+                opcion.value = valor;
+                opcion.textContent = valor;
+                select.appendChild(opcion);
+            });
+        }
+
+        llenarOpciones(selectTalla, 'data-talla');
+        llenarOpciones(selectColor, 'data-color');
+
+        function aplicarFiltros() {
+            const texto = inputTexto.value.trim().toLowerCase();
+            const talla = selectTalla.value;
+            const color = selectColor.value;
+            const estado = selectEstado.value;
+            let visibles = 0;
+
+            filas.forEach(fila => {
+                const coincideTexto = !texto || fila.getAttribute('data-search').includes(texto);
+                const coincideTalla = !talla || fila.getAttribute('data-talla') === talla;
+                const coincideColor = !color || fila.getAttribute('data-color') === color;
+                const coincideEstado = !estado || fila.getAttribute('data-estado') === estado;
+                const mostrar = coincideTexto && coincideTalla && coincideColor && coincideEstado;
+
+                fila.classList.toggle('d-none', !mostrar);
+                if (mostrar) visibles++;
+            });
+
+            filaSinResultados.classList.toggle('ff-filtros-vacio', visibles !== 0);
+        }
+
+        [inputTexto, selectTalla, selectColor, selectEstado].forEach(el => {
+            el.addEventListener('input', aplicarFiltros);
+            el.addEventListener('change', aplicarFiltros);
+        });
+
+        btnLimpiar.addEventListener('click', () => {
+            inputTexto.value = '';
+            selectTalla.value = '';
+            selectColor.value = '';
+            selectEstado.value = '';
+            aplicarFiltros();
+        });
+    })();
+
+    // Mostrar toast de éxito por 4 segundos
+    (function () {
+        const toastElement = document.getElementById('toastExito');
+        if (toastElement) {
+            toastElement.style.display = 'block';
+            setTimeout(function () {
+                toastElement.style.display = 'none';
+            }, 4000);
+        }
+    })();
+</script>
+
+</body>
+</html>

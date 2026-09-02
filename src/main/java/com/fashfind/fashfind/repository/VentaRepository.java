@@ -14,6 +14,7 @@ public interface VentaRepository extends JpaRepository<Venta, Integer> {
     @Query("SELECT v FROM Venta v JOIN FETCH v.usuario ORDER BY v.fechaVenta DESC, v.hora DESC")
     List<Venta> findAllConUsuario();
 
+<<<<<<< HEAD
     /**
      * Igual que findAllConUsuario(), pero solo las ventas registradas por un
      * usuario especifico. Se usa para que la tabla de "Gestion de Ventas"
@@ -24,6 +25,8 @@ public interface VentaRepository extends JpaRepository<Venta, Integer> {
             + "ORDER BY v.fechaVenta DESC, v.hora DESC")
     List<Venta> findByUsuarioIdConUsuario(Integer idUsuario);
 
+=======
+>>>>>>> 4903f414195c0ab27cab724f1199e2c7f151c88a
     @Query("SELECT DISTINCT v FROM Venta v JOIN FETCH v.usuario LEFT JOIN FETCH v.detalles d LEFT JOIN FETCH d.producto WHERE v.idVenta = :id")
     Optional<Venta> findByIdConDetalles(Integer id);
 
@@ -33,6 +36,7 @@ public interface VentaRepository extends JpaRepository<Venta, Integer> {
      * del dashboard con datos reales (las ventas desactivadas no se cuentan).
      */
     List<Venta> findByEstadoAndFechaVentaGreaterThanEqual(String estado, LocalDate desde);
+<<<<<<< HEAD
 
     /**
      * Igual que la anterior, pero filtrada por el vendedor que la registro.
@@ -47,4 +51,6 @@ public interface VentaRepository extends JpaRepository<Venta, Integer> {
      * usada en la tarjeta "Ventas Realizadas" de su panel principal.
      */
     long countByEstadoAndUsuario_IdUsuario(String estado, Integer idUsuario);
+=======
+>>>>>>> 4903f414195c0ab27cab724f1199e2c7f151c88a
 }

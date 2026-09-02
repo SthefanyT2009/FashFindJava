@@ -7,9 +7,13 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
+<<<<<<< HEAD
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
+=======
+import org.apache.poi.ss.usermodel.FillPatternType;
+>>>>>>> 4903f414195c0ab27cab724f1199e2c7f151c88a
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -21,6 +25,10 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
 
 import com.fashfind.fashfind.entity.Venta;
+<<<<<<< HEAD
+=======
+import com.lowagie.text.Chunk;
+>>>>>>> 4903f414195c0ab27cab724f1199e2c7f151c88a
 import com.lowagie.text.Document;
 import com.lowagie.text.Element;
 import com.lowagie.text.Font;
@@ -28,25 +36,34 @@ import com.lowagie.text.FontFactory;
 import com.lowagie.text.PageSize;
 import com.lowagie.text.Paragraph;
 import com.lowagie.text.Phrase;
+<<<<<<< HEAD
 import com.lowagie.text.Rectangle;
 import com.lowagie.text.pdf.ColumnText;
 import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfPageEventHelper;
+=======
+import com.lowagie.text.pdf.PdfPCell;
+import com.lowagie.text.pdf.PdfPTable;
+>>>>>>> 4903f414195c0ab27cab724f1199e2c7f151c88a
 import com.lowagie.text.pdf.PdfWriter;
 
 /**
  * Genera el reporte de ventas en PDF (OpenPDF) y Excel (Apache POI),
  * con los mismos indicadores mostrados en /ventas/reporte y los colores
  * de marca de FashFind (rosa #e91e8c, oscuro #1a1a2e).
+<<<<<<< HEAD
  *
  * Solo recibe ventas activas: el filtrado por estado se hace en el
  * controlador antes de llamar a estos metodos.
+=======
+>>>>>>> 4903f414195c0ab27cab724f1199e2c7f151c88a
  */
 @Service
 public class ReporteVentaService {
 
     private static final Color ROSA_AWT = new Color(0xE9, 0x1E, 0x8C);
+<<<<<<< HEAD
     private static final Color ROSA_OSCURO_AWT = new Color(0xC2, 0x18, 0x5B);
     private static final Color OSCURO_AWT = new Color(0x1A, 0x1A, 0x2E);
     private static final Color ROSA_CLARO_AWT = new Color(0xFD, 0xF0, 0xF7);
@@ -76,6 +93,34 @@ public class ReporteVentaService {
 
             documento.add(new Paragraph("Indicadores generales", fuenteSeccion));
             documento.add(new Paragraph(" ", FontFactory.getFont(FontFactory.HELVETICA, 4)));
+=======
+    private static final Color OSCURO_AWT = new Color(0x1A, 0x1A, 0x2E);
+    private static final byte[] ROSA_RGB = new byte[]{(byte) 0xE9, (byte) 0x1E, (byte) 0x8C};
+
+    private static final String[] COLUMNAS =
+            {"#", "Fecha", "Hora", "Vendedor", "Metodo de Pago", "Unidades", "Total", "Estado"};
+
+    public byte[] generarPdf(List<Venta> ventas, long totalVentas, long unidadesVendidas,
+                              long ingresosTotales, long ventasEfectivo, long ventasTransferencia, long ticketPromedio) {
+        Document documento = new Document(PageSize.A4.rotate(), 24, 24, 30, 30);
+        ByteArrayOutputStream salida = new ByteArrayOutputStream();
+        try {
+            PdfWriter.getInstance(documento, salida);
+            documento.open();
+
+            Font fuenteTitulo = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 18, OSCURO_AWT);
+            Font fuenteSub = FontFactory.getFont(FontFactory.HELVETICA, 10, Color.GRAY);
+            Font fuenteEtiqueta = FontFactory.getFont(FontFactory.HELVETICA, 8, Color.GRAY);
+            Font fuenteValor = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 13, ROSA_AWT);
+            Font fuenteEncabezado = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 9, Color.WHITE);
+            Font fuenteCelda = FontFactory.getFont(FontFactory.HELVETICA, 9, OSCURO_AWT);
+
+            documento.add(new Paragraph("FashFind - Reporte de Ventas", fuenteTitulo));
+
+            String fecha = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
+            documento.add(new Paragraph("Generado el " + fecha, fuenteSub));
+            documento.add(Chunk.NEWLINE);
+>>>>>>> 4903f414195c0ab27cab724f1199e2c7f151c88a
 
             String[] etiquetas = {"Ventas", "Unidades", "Efectivo", "Transferencia", "Ticket Promedio", "Ingresos"};
             String[] valores = {
@@ -89,6 +134,7 @@ public class ReporteVentaService {
 
             PdfPTable resumen = new PdfPTable(etiquetas.length);
             resumen.setWidthPercentage(100);
+<<<<<<< HEAD
             resumen.setSpacingAfter(16);
             for (int i = 0; i < etiquetas.length; i++) {
                 PdfPCell celda = new PdfPCell();
@@ -98,10 +144,18 @@ public class ReporteVentaService {
                 celda.setBorderWidth(2f);
                 celda.setPadding(10);
                 celda.addElement(new Paragraph(etiquetas[i].toUpperCase(), fuenteEtiqueta));
+=======
+            for (int i = 0; i < etiquetas.length; i++) {
+                PdfPCell celda = new PdfPCell();
+                celda.setBorderColor(new Color(0xF0, 0xDB, 0xE9));
+                celda.setPadding(8);
+                celda.addElement(new Paragraph(etiquetas[i], fuenteEtiqueta));
+>>>>>>> 4903f414195c0ab27cab724f1199e2c7f151c88a
                 celda.addElement(new Paragraph(valores[i], fuenteValor));
                 resumen.addCell(celda);
             }
             documento.add(resumen);
+<<<<<<< HEAD
 
             documento.add(new Paragraph("Detalle de ventas activas", fuenteSeccion));
             documento.add(new Paragraph(" ", FontFactory.getFont(FontFactory.HELVETICA, 4)));
@@ -117,11 +171,24 @@ public class ReporteVentaService {
                 celda.setPadding(7);
                 celda.setHorizontalAlignment(numerica ? Element.ALIGN_RIGHT : Element.ALIGN_LEFT);
                 celda.setBorder(0);
+=======
+            documento.add(Chunk.NEWLINE);
+
+            PdfPTable tabla = new PdfPTable(COLUMNAS.length);
+            tabla.setWidthPercentage(100);
+            tabla.setWidths(new float[]{0.6f, 1.1f, 1f, 1.6f, 1.4f, 1f, 1.2f, 1f});
+            for (String columna : COLUMNAS) {
+                PdfPCell celda = new PdfPCell(new Phrase(columna, fuenteEncabezado));
+                celda.setBackgroundColor(ROSA_AWT);
+                celda.setPadding(6);
+                celda.setHorizontalAlignment(Element.ALIGN_CENTER);
+>>>>>>> 4903f414195c0ab27cab724f1199e2c7f151c88a
                 tabla.addCell(celda);
             }
 
             DateTimeFormatter formatoFecha = DateTimeFormatter.ofPattern("dd/MM/yyyy");
             DateTimeFormatter formatoHora = DateTimeFormatter.ofPattern("HH:mm");
+<<<<<<< HEAD
             boolean parImpar = false;
             for (Venta v : ventas) {
                 Color fondoFila = parImpar ? ROSA_CLARO_AWT : Color.WHITE;
@@ -133,6 +200,17 @@ public class ReporteVentaService {
                 agregarCelda(tabla, String.valueOf(v.getTotalUnidades()), fuenteCelda, Element.ALIGN_RIGHT, fondoFila);
                 agregarCelda(tabla, "$" + formatearMiles(v.getCostoTotal()), fuenteCelda, Element.ALIGN_RIGHT, fondoFila);
                 parImpar = !parImpar;
+=======
+            for (Venta v : ventas) {
+                agregarCelda(tabla, "#" + v.getIdVenta(), fuenteCelda);
+                agregarCelda(tabla, v.getFechaVenta().format(formatoFecha), fuenteCelda);
+                agregarCelda(tabla, v.getHora().format(formatoHora), fuenteCelda);
+                agregarCelda(tabla, v.getUsuario().getNombres() + " " + v.getUsuario().getApellidos(), fuenteCelda);
+                agregarCelda(tabla, v.getMetodoPago().toString(), fuenteCelda);
+                agregarCelda(tabla, String.valueOf(v.getTotalUnidades()), fuenteCelda);
+                agregarCelda(tabla, "$" + formatearMiles(v.getCostoTotal()), fuenteCelda);
+                agregarCelda(tabla, v.getEstado(), fuenteCelda);
+>>>>>>> 4903f414195c0ab27cab724f1199e2c7f151c88a
             }
             documento.add(tabla);
         } catch (Exception e) {
@@ -149,6 +227,7 @@ public class ReporteVentaService {
                                 long ingresosTotales, long ventasEfectivo, long ventasTransferencia, long ticketPromedio) {
         try (XSSFWorkbook libro = new XSSFWorkbook(); ByteArrayOutputStream salida = new ByteArrayOutputStream()) {
             Sheet hoja = libro.createSheet("Ventas");
+<<<<<<< HEAD
             hoja.setDisplayGridlines(false);
 
             XSSFCellStyle estiloBandaTitulo = libro.createCellStyle();
@@ -188,10 +267,27 @@ public class ReporteVentaService {
                 filaSub.createCell(i).setCellStyle(estiloBandaSub);
             }
             hoja.addMergedRegion(new CellRangeAddress(1, 1, 0, COLUMNAS.length - 1));
+=======
+
+            XSSFCellStyle estiloTitulo = libro.createCellStyle();
+            XSSFFont fuenteTitulo = libro.createFont();
+            fuenteTitulo.setBold(true);
+            fuenteTitulo.setFontHeightInPoints((short) 14);
+            estiloTitulo.setFont(fuenteTitulo);
+
+            Row filaTitulo = hoja.createRow(0);
+            filaTitulo.createCell(0).setCellValue("FashFind - Reporte de Ventas");
+            filaTitulo.getCell(0).setCellStyle(estiloTitulo);
+            hoja.addMergedRegion(new CellRangeAddress(0, 0, 0, COLUMNAS.length - 1));
+
+            String fecha = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
+            hoja.createRow(1).createCell(0).setCellValue("Generado el " + fecha);
+>>>>>>> 4903f414195c0ab27cab724f1199e2c7f151c88a
 
             String[] etiquetasResumen = {"Ventas", "Unidades", "Efectivo", "Transferencia", "Ticket Promedio", "Ingresos"};
             long[] valoresResumen = {totalVentas, unidadesVendidas, ventasEfectivo, ventasTransferencia, ticketPromedio, ingresosTotales};
 
+<<<<<<< HEAD
             XSSFCellStyle estiloTarjetaEtiqueta = libro.createCellStyle();
             estiloTarjetaEtiqueta.setFillForegroundColor(new XSSFColor(ROSA_CLARO_RGB, null));
             estiloTarjetaEtiqueta.setFillPattern(FillPatternType.SOLID_FOREGROUND);
@@ -240,11 +336,30 @@ public class ReporteVentaService {
             estiloEncabezado.setFillPattern(FillPatternType.SOLID_FOREGROUND);
             estiloEncabezado.setAlignment(HorizontalAlignment.CENTER);
             estiloEncabezado.setVerticalAlignment(org.apache.poi.ss.usermodel.VerticalAlignment.CENTER);
+=======
+            XSSFCellStyle estiloEtiquetaResumen = libro.createCellStyle();
+            XSSFFont fuenteEtiquetaResumen = libro.createFont();
+            fuenteEtiquetaResumen.setColor(IndexedColors.GREY_50_PERCENT.getIndex());
+            estiloEtiquetaResumen.setFont(fuenteEtiquetaResumen);
+
+            Row filaEtiquetasResumen = hoja.createRow(3);
+            Row filaValoresResumen = hoja.createRow(4);
+            for (int i = 0; i < etiquetasResumen.length; i++) {
+                filaEtiquetasResumen.createCell(i).setCellValue(etiquetasResumen[i]);
+                filaEtiquetasResumen.getCell(i).setCellStyle(estiloEtiquetaResumen);
+                filaValoresResumen.createCell(i).setCellValue(valoresResumen[i]);
+            }
+
+            XSSFCellStyle estiloEncabezado = libro.createCellStyle();
+            estiloEncabezado.setFillForegroundColor(new XSSFColor(ROSA_RGB, null));
+            estiloEncabezado.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+>>>>>>> 4903f414195c0ab27cab724f1199e2c7f151c88a
             XSSFFont fuenteEncabezado = libro.createFont();
             fuenteEncabezado.setBold(true);
             fuenteEncabezado.setColor(IndexedColors.WHITE.getIndex());
             estiloEncabezado.setFont(fuenteEncabezado);
 
+<<<<<<< HEAD
             XSSFCellStyle estiloFilaBlanca = estiloFilaDatos(libro, false, false);
             XSSFCellStyle estiloFilaBlancaNum = estiloFilaDatos(libro, false, true);
             XSSFCellStyle estiloFilaRosa = estiloFilaDatos(libro, true, false);
@@ -253,6 +368,10 @@ public class ReporteVentaService {
             int filaEncabezadoIdx = 6;
             Row filaEncabezado = hoja.createRow(filaEncabezadoIdx);
             filaEncabezado.setHeightInPoints(20);
+=======
+            int filaEncabezadoIdx = 6;
+            Row filaEncabezado = hoja.createRow(filaEncabezadoIdx);
+>>>>>>> 4903f414195c0ab27cab724f1199e2c7f151c88a
             for (int i = 0; i < COLUMNAS.length; i++) {
                 filaEncabezado.createCell(i).setCellValue(COLUMNAS[i]);
                 filaEncabezado.getCell(i).setCellStyle(estiloEncabezado);
@@ -261,6 +380,7 @@ public class ReporteVentaService {
             DateTimeFormatter formatoFecha = DateTimeFormatter.ofPattern("dd/MM/yyyy");
             DateTimeFormatter formatoHora = DateTimeFormatter.ofPattern("HH:mm");
             int fila = filaEncabezadoIdx + 1;
+<<<<<<< HEAD
             boolean parImpar = false;
             for (Venta v : ventas) {
                 Row r = hoja.createRow(fila++);
@@ -285,6 +405,22 @@ public class ReporteVentaService {
             int[] anchos = {2200, 3200, 2600, 6500, 4200, 3200, 3800};
             for (int i = 0; i < COLUMNAS.length; i++) {
                 hoja.setColumnWidth(i, anchos[i]);
+=======
+            for (Venta v : ventas) {
+                Row r = hoja.createRow(fila++);
+                r.createCell(0).setCellValue("#" + v.getIdVenta());
+                r.createCell(1).setCellValue(v.getFechaVenta().format(formatoFecha));
+                r.createCell(2).setCellValue(v.getHora().format(formatoHora));
+                r.createCell(3).setCellValue(v.getUsuario().getNombres() + " " + v.getUsuario().getApellidos());
+                r.createCell(4).setCellValue(v.getMetodoPago().toString());
+                r.createCell(5).setCellValue(v.getTotalUnidades());
+                r.createCell(6).setCellValue(v.getCostoTotal());
+                r.createCell(7).setCellValue(v.getEstado());
+            }
+
+            for (int i = 0; i < COLUMNAS.length; i++) {
+                hoja.autoSizeColumn(i);
+>>>>>>> 4903f414195c0ab27cab724f1199e2c7f151c88a
             }
 
             libro.write(salida);
@@ -294,6 +430,7 @@ public class ReporteVentaService {
         }
     }
 
+<<<<<<< HEAD
     private XSSFCellStyle estiloFilaDatos(XSSFWorkbook libro, boolean rosa, boolean alinearDerecha) {
         XSSFCellStyle estilo = libro.createCellStyle();
         if (rosa) {
@@ -328,12 +465,18 @@ public class ReporteVentaService {
         celda.setBorderWidth(0.5f);
         celda.setBackgroundColor(fondo);
         celda.setHorizontalAlignment(alineacion);
+=======
+    private void agregarCelda(PdfPTable tabla, String texto, Font fuente) {
+        PdfPCell celda = new PdfPCell(new Phrase(texto != null ? texto : "-", fuente));
+        celda.setPadding(6);
+>>>>>>> 4903f414195c0ab27cab724f1199e2c7f151c88a
         tabla.addCell(celda);
     }
 
     private String formatearMiles(long valor) {
         return String.format("%,d", valor).replace(",", ".");
     }
+<<<<<<< HEAD
 
     /**
      * Dibuja el encabezado rosa con el titulo en cada pagina y el pie con
@@ -394,4 +537,6 @@ public class ReporteVentaService {
                     documento.bottomMargin() - 12, 0);
         }
     }
+=======
+>>>>>>> 4903f414195c0ab27cab724f1199e2c7f151c88a
 }

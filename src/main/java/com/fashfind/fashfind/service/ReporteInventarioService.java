@@ -7,9 +7,13 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
+<<<<<<< HEAD
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
+=======
+import org.apache.poi.ss.usermodel.FillPatternType;
+>>>>>>> 4903f414195c0ab27cab724f1199e2c7f151c88a
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -21,6 +25,10 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
 
 import com.fashfind.fashfind.entity.Inventario;
+<<<<<<< HEAD
+=======
+import com.lowagie.text.Chunk;
+>>>>>>> 4903f414195c0ab27cab724f1199e2c7f151c88a
 import com.lowagie.text.Document;
 import com.lowagie.text.Element;
 import com.lowagie.text.Font;
@@ -28,25 +36,34 @@ import com.lowagie.text.FontFactory;
 import com.lowagie.text.PageSize;
 import com.lowagie.text.Paragraph;
 import com.lowagie.text.Phrase;
+<<<<<<< HEAD
 import com.lowagie.text.Rectangle;
 import com.lowagie.text.pdf.ColumnText;
 import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfPageEventHelper;
+=======
+import com.lowagie.text.pdf.PdfPCell;
+import com.lowagie.text.pdf.PdfPTable;
+>>>>>>> 4903f414195c0ab27cab724f1199e2c7f151c88a
 import com.lowagie.text.pdf.PdfWriter;
 
 /**
  * Genera el reporte de inventario en PDF (OpenPDF) y Excel (Apache POI),
  * usando los mismos indicadores que se muestran en /inventario/reporte y
  * los colores de marca de FashFind (rosa #e91e8c, oscuro #1a1a2e).
+<<<<<<< HEAD
  *
  * Solo recibe registros de inventario activos: el filtrado por estado se
  * hace en el controlador antes de llamar a estos metodos.
+=======
+>>>>>>> 4903f414195c0ab27cab724f1199e2c7f151c88a
  */
 @Service
 public class ReporteInventarioService {
 
     private static final Color ROSA_AWT = new Color(0xE9, 0x1E, 0x8C);
+<<<<<<< HEAD
     private static final Color ROSA_OSCURO_AWT = new Color(0xC2, 0x18, 0x5B);
     private static final Color OSCURO_AWT = new Color(0x1A, 0x1A, 0x2E);
     private static final Color ROSA_CLARO_AWT = new Color(0xFD, 0xF0, 0xF7);
@@ -76,6 +93,35 @@ public class ReporteInventarioService {
 
             documento.add(new Paragraph("Indicadores generales", fuenteSeccion));
             documento.add(new Paragraph(" ", FontFactory.getFont(FontFactory.HELVETICA, 4)));
+=======
+    private static final Color OSCURO_AWT = new Color(0x1A, 0x1A, 0x2E);
+    private static final byte[] ROSA_RGB = new byte[]{(byte) 0xE9, (byte) 0x1E, (byte) 0x8C};
+
+    private static final String[] COLUMNAS =
+            {"Producto", "Talla", "Color", "Precio", "Stock Disponible", "Stock Minimo", "Nivel", "Estado"};
+
+    public byte[] generarPdf(List<Inventario> inventarios, long totalReferencias, long unidadesTotales,
+                              long bajoStock, long normal, long sobrestock, long valorTotal) {
+        Document documento = new Document(PageSize.A4.rotate(), 24, 24, 30, 30);
+        ByteArrayOutputStream salida = new ByteArrayOutputStream();
+        try {
+            PdfWriter.getInstance(documento, salida);
+            documento.open();
+
+            Font fuenteTitulo = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 18, OSCURO_AWT);
+            Font fuenteSub = FontFactory.getFont(FontFactory.HELVETICA, 10, Color.GRAY);
+            Font fuenteEtiqueta = FontFactory.getFont(FontFactory.HELVETICA, 8, Color.GRAY);
+            Font fuenteValor = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 13, ROSA_AWT);
+            Font fuenteEncabezado = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 9, Color.WHITE);
+            Font fuenteCelda = FontFactory.getFont(FontFactory.HELVETICA, 9, OSCURO_AWT);
+
+            Paragraph titulo = new Paragraph("FashFind - Reporte de Inventario", fuenteTitulo);
+            documento.add(titulo);
+
+            String fecha = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
+            documento.add(new Paragraph("Generado el " + fecha, fuenteSub));
+            documento.add(Chunk.NEWLINE);
+>>>>>>> 4903f414195c0ab27cab724f1199e2c7f151c88a
 
             String[] etiquetas = {"Referencias", "Unidades", "Bajo Stock", "Normal", "Sobrestock", "Valor Total"};
             String[] valores = {
@@ -89,6 +135,7 @@ public class ReporteInventarioService {
 
             PdfPTable resumen = new PdfPTable(etiquetas.length);
             resumen.setWidthPercentage(100);
+<<<<<<< HEAD
             resumen.setSpacingAfter(16);
             for (int i = 0; i < etiquetas.length; i++) {
                 PdfPCell celda = new PdfPCell();
@@ -98,10 +145,18 @@ public class ReporteInventarioService {
                 celda.setBorderWidth(2f);
                 celda.setPadding(10);
                 celda.addElement(new Paragraph(etiquetas[i].toUpperCase(), fuenteEtiqueta));
+=======
+            for (int i = 0; i < etiquetas.length; i++) {
+                PdfPCell celda = new PdfPCell();
+                celda.setBorderColor(new Color(0xF0, 0xDB, 0xE9));
+                celda.setPadding(8);
+                celda.addElement(new Paragraph(etiquetas[i], fuenteEtiqueta));
+>>>>>>> 4903f414195c0ab27cab724f1199e2c7f151c88a
                 celda.addElement(new Paragraph(valores[i], fuenteValor));
                 resumen.addCell(celda);
             }
             documento.add(resumen);
+<<<<<<< HEAD
 
             documento.add(new Paragraph("Detalle de inventario activo", fuenteSeccion));
             documento.add(new Paragraph(" ", FontFactory.getFont(FontFactory.HELVETICA, 4)));
@@ -132,6 +187,30 @@ public class ReporteInventarioService {
                 agregarCelda(tabla, String.valueOf(inv.getStockMinimo()), fuenteCelda, Element.ALIGN_RIGHT, fondoFila);
                 agregarCelda(tabla, inv.getNivelStock(), fuenteCelda, Element.ALIGN_RIGHT, fondoFila);
                 parImpar = !parImpar;
+=======
+            documento.add(Chunk.NEWLINE);
+
+            PdfPTable tabla = new PdfPTable(COLUMNAS.length);
+            tabla.setWidthPercentage(100);
+            tabla.setWidths(new float[]{2.2f, 1f, 1.2f, 1f, 1.3f, 1.2f, 1.2f, 1.1f});
+            for (String columna : COLUMNAS) {
+                PdfPCell celda = new PdfPCell(new Phrase(columna, fuenteEncabezado));
+                celda.setBackgroundColor(ROSA_AWT);
+                celda.setPadding(6);
+                celda.setHorizontalAlignment(Element.ALIGN_CENTER);
+                tabla.addCell(celda);
+            }
+
+            for (Inventario inv : inventarios) {
+                agregarCelda(tabla, inv.getProducto().getNombreProducto(), fuenteCelda);
+                agregarCelda(tabla, inv.getProducto().getTalla(), fuenteCelda);
+                agregarCelda(tabla, inv.getProducto().getColor(), fuenteCelda);
+                agregarCelda(tabla, "$" + inv.getProducto().getPrecio(), fuenteCelda);
+                agregarCelda(tabla, String.valueOf(inv.getStockDisponible()), fuenteCelda);
+                agregarCelda(tabla, String.valueOf(inv.getStockMinimo()), fuenteCelda);
+                agregarCelda(tabla, inv.getNivelStock(), fuenteCelda);
+                agregarCelda(tabla, inv.getEstado(), fuenteCelda);
+>>>>>>> 4903f414195c0ab27cab724f1199e2c7f151c88a
             }
             documento.add(tabla);
         } catch (Exception e) {
@@ -148,6 +227,7 @@ public class ReporteInventarioService {
                                 long bajoStock, long normal, long sobrestock, long valorTotal) {
         try (XSSFWorkbook libro = new XSSFWorkbook(); ByteArrayOutputStream salida = new ByteArrayOutputStream()) {
             Sheet hoja = libro.createSheet("Inventario");
+<<<<<<< HEAD
             hoja.setDisplayGridlines(false);
 
             XSSFCellStyle estiloBandaTitulo = libro.createCellStyle();
@@ -187,10 +267,27 @@ public class ReporteInventarioService {
                 filaSub.createCell(i).setCellStyle(estiloBandaSub);
             }
             hoja.addMergedRegion(new CellRangeAddress(1, 1, 0, COLUMNAS.length - 1));
+=======
+
+            XSSFCellStyle estiloTitulo = libro.createCellStyle();
+            XSSFFont fuenteTitulo = libro.createFont();
+            fuenteTitulo.setBold(true);
+            fuenteTitulo.setFontHeightInPoints((short) 14);
+            estiloTitulo.setFont(fuenteTitulo);
+
+            Row filaTitulo = hoja.createRow(0);
+            filaTitulo.createCell(0).setCellValue("FashFind - Reporte de Inventario");
+            filaTitulo.getCell(0).setCellStyle(estiloTitulo);
+            hoja.addMergedRegion(new CellRangeAddress(0, 0, 0, COLUMNAS.length - 1));
+
+            String fecha = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
+            hoja.createRow(1).createCell(0).setCellValue("Generado el " + fecha);
+>>>>>>> 4903f414195c0ab27cab724f1199e2c7f151c88a
 
             String[] etiquetasResumen = {"Referencias", "Unidades", "Bajo Stock", "Normal", "Sobrestock", "Valor Total"};
             long[] valoresResumen = {totalReferencias, unidadesTotales, bajoStock, normal, sobrestock, valorTotal};
 
+<<<<<<< HEAD
             XSSFCellStyle estiloTarjetaEtiqueta = libro.createCellStyle();
             estiloTarjetaEtiqueta.setFillForegroundColor(new XSSFColor(ROSA_CLARO_RGB, null));
             estiloTarjetaEtiqueta.setFillPattern(FillPatternType.SOLID_FOREGROUND);
@@ -239,11 +336,30 @@ public class ReporteInventarioService {
             estiloEncabezado.setFillPattern(FillPatternType.SOLID_FOREGROUND);
             estiloEncabezado.setAlignment(HorizontalAlignment.CENTER);
             estiloEncabezado.setVerticalAlignment(org.apache.poi.ss.usermodel.VerticalAlignment.CENTER);
+=======
+            XSSFCellStyle estiloEtiquetaResumen = libro.createCellStyle();
+            XSSFFont fuenteEtiquetaResumen = libro.createFont();
+            fuenteEtiquetaResumen.setColor(IndexedColors.GREY_50_PERCENT.getIndex());
+            estiloEtiquetaResumen.setFont(fuenteEtiquetaResumen);
+
+            Row filaEtiquetasResumen = hoja.createRow(3);
+            Row filaValoresResumen = hoja.createRow(4);
+            for (int i = 0; i < etiquetasResumen.length; i++) {
+                filaEtiquetasResumen.createCell(i).setCellValue(etiquetasResumen[i]);
+                filaEtiquetasResumen.getCell(i).setCellStyle(estiloEtiquetaResumen);
+                filaValoresResumen.createCell(i).setCellValue(valoresResumen[i]);
+            }
+
+            XSSFCellStyle estiloEncabezado = libro.createCellStyle();
+            estiloEncabezado.setFillForegroundColor(new XSSFColor(ROSA_RGB, null));
+            estiloEncabezado.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+>>>>>>> 4903f414195c0ab27cab724f1199e2c7f151c88a
             XSSFFont fuenteEncabezado = libro.createFont();
             fuenteEncabezado.setBold(true);
             fuenteEncabezado.setColor(IndexedColors.WHITE.getIndex());
             estiloEncabezado.setFont(fuenteEncabezado);
 
+<<<<<<< HEAD
             XSSFCellStyle estiloFilaBlanca = estiloFilaDatos(libro, false, false);
             XSSFCellStyle estiloFilaBlancaNum = estiloFilaDatos(libro, false, true);
             XSSFCellStyle estiloFilaRosa = estiloFilaDatos(libro, true, false);
@@ -252,12 +368,17 @@ public class ReporteInventarioService {
             int filaEncabezadoIdx = 6;
             Row filaEncabezado = hoja.createRow(filaEncabezadoIdx);
             filaEncabezado.setHeightInPoints(20);
+=======
+            int filaEncabezadoIdx = 6;
+            Row filaEncabezado = hoja.createRow(filaEncabezadoIdx);
+>>>>>>> 4903f414195c0ab27cab724f1199e2c7f151c88a
             for (int i = 0; i < COLUMNAS.length; i++) {
                 filaEncabezado.createCell(i).setCellValue(COLUMNAS[i]);
                 filaEncabezado.getCell(i).setCellStyle(estiloEncabezado);
             }
 
             int fila = filaEncabezadoIdx + 1;
+<<<<<<< HEAD
             boolean parImpar = false;
             for (Inventario inv : inventarios) {
                 Row r = hoja.createRow(fila++);
@@ -282,6 +403,22 @@ public class ReporteInventarioService {
             int[] anchos = {7500, 2800, 3800, 3200, 4200, 3800, 3200};
             for (int i = 0; i < COLUMNAS.length; i++) {
                 hoja.setColumnWidth(i, anchos[i]);
+=======
+            for (Inventario inv : inventarios) {
+                Row r = hoja.createRow(fila++);
+                r.createCell(0).setCellValue(inv.getProducto().getNombreProducto());
+                r.createCell(1).setCellValue(inv.getProducto().getTalla());
+                r.createCell(2).setCellValue(inv.getProducto().getColor());
+                r.createCell(3).setCellValue(inv.getProducto().getPrecio());
+                r.createCell(4).setCellValue(inv.getStockDisponible());
+                r.createCell(5).setCellValue(inv.getStockMinimo());
+                r.createCell(6).setCellValue(inv.getNivelStock());
+                r.createCell(7).setCellValue(inv.getEstado());
+            }
+
+            for (int i = 0; i < COLUMNAS.length; i++) {
+                hoja.autoSizeColumn(i);
+>>>>>>> 4903f414195c0ab27cab724f1199e2c7f151c88a
             }
 
             libro.write(salida);
@@ -291,6 +428,7 @@ public class ReporteInventarioService {
         }
     }
 
+<<<<<<< HEAD
     private XSSFCellStyle estiloFilaDatos(XSSFWorkbook libro, boolean rosa, boolean alinearDerecha) {
         XSSFCellStyle estilo = libro.createCellStyle();
         if (rosa) {
@@ -325,12 +463,18 @@ public class ReporteInventarioService {
         celda.setBorderWidth(0.5f);
         celda.setBackgroundColor(fondo);
         celda.setHorizontalAlignment(alineacion);
+=======
+    private void agregarCelda(PdfPTable tabla, String texto, Font fuente) {
+        PdfPCell celda = new PdfPCell(new Phrase(texto != null ? texto : "-", fuente));
+        celda.setPadding(6);
+>>>>>>> 4903f414195c0ab27cab724f1199e2c7f151c88a
         tabla.addCell(celda);
     }
 
     private String formatearMiles(long valor) {
         return String.format("%,d", valor).replace(",", ".");
     }
+<<<<<<< HEAD
 
     /**
      * Dibuja el encabezado rosa con el titulo en cada pagina y el pie con
@@ -391,4 +535,6 @@ public class ReporteInventarioService {
                     documento.bottomMargin() - 12, 0);
         }
     }
+=======
+>>>>>>> 4903f414195c0ab27cab724f1199e2c7f151c88a
 }

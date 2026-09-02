@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title th:text="${esNueva} ? 'Nueva Venta - FashFind' : 'Editar Venta - FashFind'"></title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="/css/fashfind.css" rel="stylesheet">
+    <style>
+        .ff-fila-producto select.is-invalid,
+        .ff-fila-producto input.is-invalid { background-position: right calc(.375em + .3em) center; }
+        .ff-resumen-pago { background: #faf5f9; border-radius: 12px; }
+        .ff-btn-quitar-fila { width: 34px; height: 34px; border-radius: 50%; border: none; }
+    </style>
+</head>
+<body class="ff-login-bg py-5">
+
+    <div class="container">
+        <a th:href="@{/ventas}" class="btn btn-sm mb-3 ff-btn-back">
+            <i class="bi bi-arrow-left"></i> Volver a Gestion de Ventas
+        </a>
+        <div class="row justify-content-center">
+            <div class="col-lg-9">
+                <div class="card shadow border-0 rounded-3 ff-card-login">
+                    <div class="card-body p-4 p-md-5">
+
+                        <div class="text-center mb-4">
+                            <i class="bi bi-cash-coin fs-1 text-ff"></i>
+                            <h3 class="fw-bold mt-2" style="color:#1a1a2e;" th:text="${esNueva} ? 'Nueva Venta' : 'Editar Venta #' + ${venta.idVenta}"></h3>
+                            <p class="text-muted small mb-0" th:text="${esNueva} ? 'Registra una venta de mostrador' : 'Actualiza los productos o el pago de la venta'"></p>
+                        </div>
+
+                        <div th:if="${error}" class="alert alert-danger d-flex align-items-center" role="alert">
+                            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                            <span th:text="${error}"></span>
+                        </div>
+
+                        <form th:object="${venta}"
+                              th:action="${esNueva} ? @{/ventas} : @{'/ventas/actualizar/' + ${venta.idVenta}}"
+                              method="post" id="formVenta" novalidate>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label fw-semibold">Metodo de Pago</label>
+                                    <select th:field="*{metodoPago}" id="metodoPago" class="form-select" required>
+                                        <option value="" disabled selected>Selecciona un metodo</option>
+                                        <option value="Efectivo">Efectivo</option>
+                                        <option value="Transferencia">Transferencia</option>
+                                    </select>
+                                    <div class="invalid-feedback">Selecciona un metodo de pago.</div>
+                                </div>
+                                <div class="col-md-6 mb-3" th:unless="${esNueva}">
+                                    <label class="form-label fw-semibold">Vendedor</label>
+                                    <input type="text" class="form-control" th:value="${venta.usuario.nombres} + ' ' + ${venta.usuario.apellidos}" disabled>
+                                </div>
+                            </div>
+
+                            <label class="form-label fw-semibold mb-2">Detalle de la Venta</label>
+                            <div class="ff-card-table mb-2">
+                                <table class="table align-middle mb-0" id="tablaDetalle">
+                                    <thead>
+                                    <tr>
+                                        <th style="min-width:220px;">Producto</th>
+                                        <th style="width:130px;">Precio</th>
+                                        <th style="width:110px;">Stock</th>
+                                        <th style="width:110px;">Cantidad</th>
+                                        <th style="width:130px;">Subtotal</th>
+                                        <th style="width:50px;"></th>
+                                    </tr>
+                                    </thead>
+                                    <tbody id="cuerpoDetalle"></tbody>
+                                </table>
+                            </div>
+                            <div class="alert alert-warning py-2 d-none" id="alertaSinProductos">
+                                <i class="bi bi-exclamation-circle me-1"></i>
+                                Agrega al menos un producto a la venta.
+                            </div>
+                            <button type="button" class="btn btn-sm btn-outline-secondary mb-4" id="btnAgregarFila">
+                                <i class="bi bi-plus-lg me-1"></i>Agregar Producto
+                            </button>
+
+                            <div class="ff-resumen-pago p-3 mb-3">
+                                <div class="row align-items-end">
+                                    <div class="col-md-4 mb-2 mb-md-0">
+                                        <label class="form-label small text-muted mb-1">Total de la Venta</label>
+                                        <div class="fs-4 fw-bold text-ff" id="totalVenta">$0</div>
+                                    </div>
+                                    <div class="col-md-4 mb-2 mb-md-0">
+                                        <label class="form-label fw-semibold">Pago Recibido</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text bg-white">$</span>
+                                            <input type="number" th:field="*{pagoRecibido}" id="pagoRecibido" class="form-control"
+                                                   required min="0" step="1" inputmode="numeric">
+                                        </div>
+                                        <div class="text-danger small mt-1" id="feedbackPago" style="display:none;">
+                                            El pago recibido debe ser mayor o igual al total.
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label small text-muted mb-1">Cambio</label>
+                                        <div class="fs-4 fw-bold" id="cambioVenta" style="color:#1a7a3a;">$0</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn btn-ff w-100 fw-semibold py-2 mt-2"
+                                    th:text="${esNueva} ? 'Registrar Venta' : 'Actualizar Venta'"></button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script th:inline="javascript">
+    document.addEventListener('DOMContentLoaded', function () {
+
+        // ---------- Datos inyectados desde el servidor ----------
+        var PRODUCTOS = /*[[${productosDisponibles}]]*/ [];
+        var LINEAS_INICIALES = /*[[${lineasIniciales}]]*/ [];
+        var ES_NUEVA = /*[[${esNueva}]]*/ true;
+
+        var cuerpoDetalle = document.getElementById('cuerpoDetalle');
+        var btnAgregarFila = document.getElementById('btnAgregarFila');
+        var alertaSinProductos = document.getElementById('alertaSinProductos');
+        var totalVentaEl = document.getElementById('totalVenta');
+        var cambioVentaEl = document.getElementById('cambioVenta');
+        var campoPago = document.getElementById('pagoRecibido');
+        var feedbackPago = document.getElementById('feedbackPago');
+        var campoMetodo = document.getElementById('metodoPago');
+        var form = document.getElementById('formVenta');
+        var contadorFilas = 0;
+
+        function formatearMiles(n) {
+            return '$' + Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+        }
+
+        function opcionesProducto(idSeleccionado) {
+            var html = '<option value="" disabled ' + (idSeleccionado ? '' : 'selected') + '>Selecciona un producto</option>';
+            PRODUCTOS.forEach(function (item) {
+                var p = item.producto;
+                var seleccionado = (String(p.idProducto) === String(idSeleccionado)) ? 'selected' : '';
+                html += '<option value="' + p.idProducto + '" data-precio="' + p.precio + '" data-stock="' + item.stockDisponible + '" ' + seleccionado + '>'
+                    + p.nombreProducto + ' (' + p.talla + ' - ' + p.color + ')</option>';
+            });
+            return html;
+        }
+
+        function crearFila(idProducto, cantidad) {
+            contadorFilas++;
+            var tr = document.createElement('tr');
+            tr.className = 'ff-fila-producto';
+            tr.innerHTML =
+                '<td><select name="productoId" class="form-select form-select-sm campo-producto" required>' + opcionesProducto(idProducto) + '</select>' +
+                '<div class="invalid-feedback">Selecciona un producto.</div></td>' +
+                '<td class="campo-precio fw-semibold">-</td>' +
+                '<td class="campo-stock text-muted">-</td>' +
+                '<td><input type="number" name="cantidad" class="form-control form-control-sm campo-cantidad" min="1" step="1" value="' + (cantidad || '') + '" required>' +
+                '<div class="invalid-feedback">Cantidad invalida.</div></td>' +
+                '<td class="campo-subtotal fw-semibold">$0</td>' +
+                '<td><button type="button" class="btn btn-ff-icon eliminar ff-btn-quitar-fila" title="Quitar"><i class="bi bi-x-lg"></i></button></td>';
+            cuerpoDetalle.appendChild(tr);
+
+            var select = tr.querySelector('.campo-producto');
+            var inputCantidad = tr.querySelector('.campo-cantidad');
+            var btnQuitar = tr.querySelector('.ff-btn-quitar-fila');
+
+            select.addEventListener('change', function () { actualizarFila(tr); recalcularTotal(); });
+            inputCantidad.addEventListener('input', function () { validarFila(tr); recalcularTotal(); });
+            btnQuitar.addEventListener('click', function () {
+                tr.remove();
+                recalcularTotal();
+            });
+
+            if (idProducto) {
+                actualizarFila(tr);
+            }
+            return tr;
+        }
+
+        function actualizarFila(tr) {
+            var select = tr.querySelector('.campo-producto');
+            var opcion = select.options[select.selectedIndex];
+            var precioCelda = tr.querySelector('.campo-precio');
+            var stockCelda = tr.querySelector('.campo-stock');
+            var inputCantidad = tr.querySelector('.campo-cantidad');
+
+            if (!opcion || !opcion.value) {
+                precioCelda.textContent = '-';
+                stockCelda.textContent = '-';
+                inputCantidad.removeAttribute('max');
+                return;
+            }
+            var precio = Number(opcion.dataset.precio);
+            var stock = Number(opcion.dataset.stock);
+            precioCelda.textContent = formatearMiles(precio);
+            stockCelda.textContent = stock + ' und.';
+            inputCantidad.setAttribute('max', stock);
+            validarFila(tr);
+        }
+
+        function validarFila(tr) {
+            var select = tr.querySelector('.campo-producto');
+            var inputCantidad = tr.querySelector('.campo-cantidad');
+            var subtotalCelda = tr.querySelector('.campo-subtotal');
+            var opcion = select.options[select.selectedIndex];
+
+            var productoOk = !!(opcion && opcion.value);
+            select.classList.toggle('is-invalid', !productoOk);
+            select.classList.toggle('is-valid', productoOk);
+
+            if (!productoOk) {
+                subtotalCelda.textContent = '$0';
+                return 0;
+            }
+
+            var stock = Number(opcion.dataset.stock);
+            var precio = Number(opcion.dataset.precio);
+            var cantidad = Number(inputCantidad.value);
+            var cantidadOk = Number.isInteger(cantidad) && cantidad >= 1 && cantidad <= stock;
+
+            inputCantidad.classList.toggle('is-invalid', !cantidadOk);
+            inputCantidad.classList.toggle('is-valid', cantidadOk);
+
+            var subtotal = cantidadOk ? cantidad * precio : 0;
+            subtotalCelda.textContent = formatearMiles(subtotal);
+            return subtotal;
+        }
+
+        function recalcularTotal() {
+            var total = 0;
+            var filas = cuerpoDetalle.querySelectorAll('tr');
+            alertaSinProductos.classList.toggle('d-none', filas.length > 0);
+            filas.forEach(function (tr) {
+                total += validarFila(tr);
+            });
+            totalVentaEl.textContent = formatearMiles(total);
+            validarPago(total);
+            return total;
+        }
+
+        function validarPago(total) {
+            var pago = Number(campoPago.value);
+            var pagoOk = campoPago.value !== '' && pago >= total;
+            campoPago.classList.toggle('is-invalid', !pagoOk);
+            campoPago.classList.toggle('is-valid', pagoOk && total > 0);
+            feedbackPago.style.display = pagoOk ? 'none' : 'block';
+            var cambio = pagoOk ? pago - total : 0;
+            cambioVentaEl.textContent = formatearMiles(cambio);
+            return pagoOk;
+        }
+
+        // Filtro numerico para cantidad y pago recibido
+        [campoPago].forEach(function (input) {
+            input.addEventListener('input', function () {
+                input.value = input.value.replace(/[^0-9]/g, '');
+                recalcularTotal();
+            });
+        });
+
+        btnAgregarFila.addEventListener('click', function () {
+            crearFila(null, null);
+            recalcularTotal();
+        });
+
+        // ---------- Filas iniciales ----------
+        if (LINEAS_INICIALES && LINEAS_INICIALES.length > 0) {
+            LINEAS_INICIALES.forEach(function (linea) {
+                crearFila(linea.idProducto, linea.cantidad);
+            });
+        } else {
+            crearFila(null, null);
+        }
+        recalcularTotal();
+
+        // ---------- Validacion al enviar ----------
+        form.addEventListener('submit', function (e) {
+            var filas = cuerpoDetalle.querySelectorAll('tr');
+            var total = recalcularTotal();
+            var todoValido = true;
+
+            var metodoOk = !!campoMetodo.value;
+            campoMetodo.classList.toggle('is-invalid', !metodoOk);
+            campoMetodo.classList.toggle('is-valid', metodoOk);
+            if (!metodoOk) todoValido = false;
+
+            if (filas.length === 0) {
+                alertaSinProductos.classList.remove('d-none');
+                todoValido = false;
+            }
+            filas.forEach(function (tr) {
+                var select = tr.querySelector('.campo-producto');
+                var inputCantidad = tr.querySelector('.campo-cantidad');
+                if (select.classList.contains('is-invalid') || inputCantidad.classList.contains('is-invalid')
+                    || !select.value || !inputCantidad.value) {
+                    todoValido = false;
+                }
+            });
+
+            if (!validarPago(total) || total <= 0) {
+                todoValido = false;
+            }
+
+            if (!todoValido) {
+                e.preventDefault();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        });
+    });
+    </script>
+
+</body>
+</html>
